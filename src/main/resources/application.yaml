@@ -3,3 +3,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+---
+# profile 설정
+spring:
+  profiles:
+    active: local

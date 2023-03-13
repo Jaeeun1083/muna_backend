@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 60초마다 설정 파일의 변경을 확인 하여 변경시 갱신 -->
+<configuration scan="true" scanPeriod="60 seconds">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/> <!-- 기본 제공 console 에 대한 appender 파일 -->
+
+    <!-- 로그 파일이 저장될 경로 -->
+    <property name="LOG_PATH" value="./logs"/>
+    <!-- 로그 파일 이름 -->
+    <property name="LOG_FILE" value="${LOG_PATH}/muna-%d{yyyy-MM-dd}-%i.log"/>
+
+    <!-- RollingFileAppender : 타깃 파일에 로그를 append 하다가 어느 조건에 다다르면 타깃 파일을 다른 파일로 바꾼다. -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_PATH}/muna.log</file>
+        <!-- 시간 및 각각의 로그 파일에 대한 크기에 기반하여 rollover 정책 정의 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- springProfile : 스프링 프로파일에 있는 설정의 섹션을 선택적으로 포함 또는 배제 할 수 있게 함 -->
+    <springProfile name="test">
+        <logger level="INFO" name="org.springframework.boot">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger level="INFO" name="com.life.muna">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger level="TRACE" name="org.hibernate.type.descriptor.sql.BasicBinder">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <logger level="INFO" name="org.springframework.boot">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+        <logger level="INFO" name="com.life.muna">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+        <logger level="ERROR" name="com.life.muna.common.error.GlobalExceptionHandler">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger level="INFO" name="org.springframework.boot">
+            <appender-ref ref="FILE"/>
+        </logger>
+        <logger level="INFO" name="com.life.muna">
+            <appender-ref ref="FILE"/>
+        </logger>
+        <logger level="ERROR" name="com.life.muna.common.error.GlobalExceptionHandler">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
+    </springProfile>
+</configuration>
