@@ -8,3 +8,16 @@ spring:
 spring:
   profiles:
     active: local
+---
+### mybatis 연동
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ENC(ouS6KgvjWYsJgipioKgSKr6l18ygue6YQfG9FUQCC7iMvhVXue1scGmXFKsJHVud)
+    username: ENC(BfdfpbO0etaXYvt+o/1qIw==)
+    password: ENC(VgBhQiHr9I112njdmGwpB4ulIKpShRXH)
+
+mybatis:
+  mapper-locations:  classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

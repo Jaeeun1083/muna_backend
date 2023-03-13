@@ -7,7 +7,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MunaBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MunaBackendApplication.class, args);
+		try {
+			SpringApplication.run(MunaBackendApplication.class, args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
