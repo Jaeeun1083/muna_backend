@@ -1,0 +1,5 @@
+# Spring boot 2.6 이후 swagger 적용을 위한 ant_path_matcher 값 변경 설정
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
