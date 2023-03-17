@@ -1,5 +1,6 @@
-package com.life.muna.common.error;
+package com.life.muna.common.dto;
 
+import com.life.muna.common.error.ErrorCode;
 import lombok.Getter;
 
 @Getter

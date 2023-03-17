@@ -1,5 +1,7 @@
 package com.life.muna.common.error;
 
+import com.life.muna.common.dto.ErrorResponse;
+import com.life.muna.common.dto.InputFieldErrorResponse;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.common.error.exception.InputFieldException;
 import org.slf4j.Logger;
