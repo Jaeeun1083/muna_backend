@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.life.muna.user.mapper.UserMapper">
+
+    <select id="existsByEmail" parameterType="java.lang.String" resultType="boolean">
+        SELECT COALESCE ((SELECT 1 FROM TB_USER WHERE EMAIL=#{email}), 0)
+    </select>
+
+    <select id="getUserByEmail" parameterType="com.life.muna.user.dto.SignInRequest" resultType="com.life.muna.user.domain.User">
+        SELECT USER_CODE, EMAIL, PASSWORD, NICKNAME, LOGIN_TYPE, PROFILE_IMAGE, FIREBASE_TOKEN, PHONE, ADDRESS, INSERT_DATE, UPDATE_DATE
+        FROM TB_USER WHERE EMAIL = #{email};
+    </select>
+
+    <insert id="signUp" parameterType="com.life.muna.user.domain.User">
+        INSERT INTO TB_USER (EMAIL, PASSWORD, NICKNAME, LOGIN_TYPE, PROFILE_IMAGE, PHONE, INSERT_DATE)
+        VALUES ( #{email}, #{password}, #{nickname}, #{loginType}, #{profileImage}, #{phone}, now());
+    </insert>
+
+</mapper>

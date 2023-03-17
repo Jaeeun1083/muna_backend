@@ -21,3 +21,11 @@ mybatis:
   mapper-locations:  classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+---
+### jwt token 설정
+
+jwt:
+  token:
+    secret-key: secretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+  access-token-validity-time: 3600
+  refresh-token-validity-time: 36000
