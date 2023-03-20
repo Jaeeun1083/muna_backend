@@ -18,28 +18,27 @@ import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     private final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception) {
+        LOG.error("handleBusinessException message: {}",exception.getMessage());
         ErrorCode errorCode = exception.getErrorCode();
-        LOG.error(errorCode.getMessage());
         ErrorResponse errorResponse = ErrorResponse.from(errorCode);
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getStatusCode()));
     }
 
     @ExceptionHandler(InputFieldException.class)
     protected ResponseEntity<InputFieldErrorResponse> handleInputFieldException(InputFieldException exception) {
+        LOG.error("handleInputFieldException field: {}, message: {}", exception.getField(),exception.getMessage());
         ErrorCode errorCode = exception.getErrorCode();
-        LOG.error(errorCode.getMessage());
         InputFieldErrorResponse errorResponse = InputFieldErrorResponse.from(errorCode, exception.getField());
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getStatusCode()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> methodValidException(MethodArgumentNotValidException e, HttpServletRequest request){
-        LOG.error("MethodArgumentNotValidException url:{}, trace:{}",request.getRequestURI(), e.getStackTrace());
+        LOG.error("MethodArgumentNotValidException url: {}, trace: {}",request.getRequestURI(), e.getStackTrace());
         ErrorResponse errorResponse = makeErrorResponse(e.getBindingResult());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -56,9 +55,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         LOG.error(exception.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.from(errorCode);
+        LOG.error("handleException message: {}",exception.getMessage());
+        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        ErrorResponse errorResponse = ErrorResponse.from(errorCode.getStatusCode(), exception.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

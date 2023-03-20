@@ -31,7 +31,7 @@ public class JwtTokenProvider {
             , final RefreshTokenRepository refreshTokenRepository
     ) {
         this.secretKey =  new SecretKeySpec(Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS256.getJcaName());
-        this.accessTokenValidityTime = accessTokenValidityTime * 1000;
+        this.accessTokenValidityTime = accessTokenValidityTime * 1000; // 3600초
         this.refreshTokenValidityTime = refreshTokenValidityTime * 1000;
         this.refreshTokenRepository = refreshTokenRepository;
     }
@@ -45,9 +45,10 @@ public class JwtTokenProvider {
         return new TokenResponse(accessToken, refreshToken);
     }
 
-    public AccessToken createAccessToken(String email) {
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(email);
-        if(refreshToken.isEmpty()) throw new BusinessException(INVALID_PROVIDER);
+    public AccessToken createAccessToken(String email, RefreshToken refreshToken) {
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(email);
+        if(optionalRefreshToken.isEmpty()) throw new BusinessException(INVALID_PROVIDER);
+        if(!optionalRefreshToken.get().getRefreshToken().equals(refreshToken.getRefreshToken())) throw new BusinessException(INVALID_AUTH_TOKEN);
 //                .orElseThrow(new BusinessException(INVALID_PROVIDER));
         return new AccessToken(createToken(email, accessTokenValidityTime));
     }

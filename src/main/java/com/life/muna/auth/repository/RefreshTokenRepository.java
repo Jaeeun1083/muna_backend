@@ -1,6 +1,8 @@
 package com.life.muna.auth.repository;
 
 import com.life.muna.auth.dto.RefreshToken;
+import com.life.muna.common.error.ErrorCode;
+import com.life.muna.common.error.exception.InputFieldException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -17,13 +19,18 @@ public class RefreshTokenRepository {
 
     public RefreshTokenRepository(final RedisTemplate redisTemplate, @Value("${jwt.refresh-token-validity-time}") long refreshTokenValidityTime) {
         this.redisTemplate = redisTemplate;
-        this.refreshTokenValidityTime = refreshTokenValidityTime * 1000;
+        this.refreshTokenValidityTime = refreshTokenValidityTime;
     }
 
     public void save(final String email, final RefreshToken refreshToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(email, refreshToken.getRefreshToken());
         redisTemplate.expire(refreshToken.getRefreshToken(), refreshTokenValidityTime, TimeUnit.SECONDS);
+    }
+
+    public Boolean delete(final String email) {
+        if (findByEmail(email).isEmpty()) throw new InputFieldException(ErrorCode.NOT_LOGIN_USER, email);
+        return redisTemplate.delete(email);
     }
 
     public Optional<RefreshToken> findById(final String refreshToken) {

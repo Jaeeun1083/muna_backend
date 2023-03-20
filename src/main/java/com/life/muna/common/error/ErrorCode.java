@@ -9,6 +9,7 @@ public enum ErrorCode {
     INVALID_PARAMETER(400, "파라미터 값을 확인해주세요."),
     INVALID_PROVIDER(400, "올바른 인증 요청이 아닙니다."),
     INVALID_AUTH_TOKEN(400, "유효한 인증 정보가 아닙니다."),
+    NOT_LOGIN_USER(400, "로그인 된 계정이 아닙니다."),
 
     /*403 FORBIDDEN 권한 인증 실패 */
     MISMATCH_MEMBER(403, "계정 정보가 일치하지 않습니다."),
