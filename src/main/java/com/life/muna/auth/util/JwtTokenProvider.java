@@ -67,10 +67,13 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseClaimsJws(token)
+                    .getBody();
+            String email = claims.getSubject();
+            if(refreshTokenRepository.findByEmail(email).isEmpty()) throw new BusinessException(INVALID_AUTH_TOKEN);
             return true;
         } catch(ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
             e.printStackTrace();
