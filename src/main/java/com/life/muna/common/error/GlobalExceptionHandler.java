@@ -8,8 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -30,6 +35,23 @@ public class GlobalExceptionHandler {
         LOG.error(errorCode.getMessage());
         InputFieldErrorResponse errorResponse = InputFieldErrorResponse.from(errorCode, exception.getField());
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getStatusCode()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> methodValidException(MethodArgumentNotValidException e, HttpServletRequest request){
+        LOG.error("MethodArgumentNotValidException url:{}, trace:{}",request.getRequestURI(), e.getStackTrace());
+        ErrorResponse errorResponse = makeErrorResponse(e.getBindingResult());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    private ErrorResponse makeErrorResponse(BindingResult bindingResult){
+        int code = 400;
+        String detail = "";
+
+        if(bindingResult.hasErrors()){
+            detail = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+        }
+        return ErrorResponse.from(code, detail);
     }
 
     @ExceptionHandler(Exception.class)

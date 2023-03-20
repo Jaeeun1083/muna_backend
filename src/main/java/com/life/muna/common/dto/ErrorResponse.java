@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class ErrorResponse {
-
     private final int statusCode;
     private final String message;
 
@@ -14,8 +13,17 @@ public class ErrorResponse {
         this.message = errorCode.getMessage();
     }
 
+    protected ErrorResponse(int StatusCode, String message) {
+        this.statusCode = StatusCode;
+        this.message = message;
+    }
+
     public static ErrorResponse from(ErrorCode errorCode) {
         return new ErrorResponse(errorCode);
+    }
+
+    public static ErrorResponse from(int StatusCode, String message) {
+        return new ErrorResponse(StatusCode, message);
     }
 
 }
