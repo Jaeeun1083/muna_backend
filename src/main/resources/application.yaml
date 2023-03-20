@@ -23,9 +23,14 @@ mybatis:
     map-underscore-to-camel-case: true
 ---
 ### jwt token 설정
-
 jwt:
   token:
     secret-key: secretsecretsecretsecretsecretsecretsecretsecretsecretsecret
   access-token-validity-time: 3600
   refresh-token-validity-time: 36000
+---
+### redis connection 설정
+spring:
+   redis:
+    host: localhost
+    port: 6379
