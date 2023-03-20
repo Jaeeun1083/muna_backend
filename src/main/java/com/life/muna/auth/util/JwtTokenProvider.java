@@ -73,6 +73,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
             String email = claims.getSubject();
+
             if(refreshTokenRepository.findByEmail(email).isEmpty()) throw new BusinessException(INVALID_AUTH_TOKEN);
             return true;
         } catch(ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
