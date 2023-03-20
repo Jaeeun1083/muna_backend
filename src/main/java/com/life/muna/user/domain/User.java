@@ -14,13 +14,13 @@ public class User {
     private String loginType;
     private String profileImage;
     private String firebaseToken;
-    private int phone;
+    private String phone;
     private String address;
     private Date insertDate;
     private Date updateDate;
 
     @Builder
-    public User(int userCode, String email, String password, String nickname, String loginType, String profileImage, String firebaseToken, int phone, String address, Date insertDate, Date updateDate) {
+    public User(int userCode, String email, String password, String nickname, String loginType, String profileImage, String firebaseToken, String phone, String address, Date insertDate, Date updateDate) {
         this.userCode = userCode;
         this.email = email;
         this.password = password;
