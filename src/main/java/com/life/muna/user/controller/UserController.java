@@ -44,13 +44,14 @@ public class UserController {
                     schema = @Schema(implementation = CommonResponse.class),
                     examples = @ExampleObject(
                             name = "example",
-                            value = "{\n" +
-                                    "  \"statusCode\": \"200\",\n" +
-                                    "  \"data\": {\n" +
-                                    "    \"int\"\n" +
-                                    "  },\n" +
-                                    "  \"message\": \"회원 가입 결과\"\n" +
-                                    "}")))
+                            value = """
+                                    {
+                                      "statusCode": "200",
+                                      "data": {
+                                        "int"
+                                      },
+                                      "message": "회원 가입 결과"
+                                    }""")))
     public ResponseEntity<CommonResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
         LOG.info("signUp email: {}" + signUpRequest.getEmail());
         LOG.info("signUp phone: {}" + signUpRequest.getPhone());
@@ -72,14 +73,15 @@ public class UserController {
                     schema = @Schema(implementation = CommonResponse.class),
                     examples = @ExampleObject(
                             name = "example",
-                            value = "{\n" +
-                                    "  \"statusCode\": \"200\",\n" +
-                                    "  \"data\": {\n" +
-                                    "    \"accessToken\" : \"string\",\n" +
-                                    "    \"refreshToken\" : \"string\"\n" +
-                                    "  },\n" +
-                                    "  \"message\": \"로그인 결과\"\n" +
-                                    "}")))
+                            value = """
+                                    {
+                                      "statusCode": "200",
+                                      "data": {
+                                        "accessToken" : "string",
+                                        "refreshToken" : "string"
+                                      },
+                                      "message": "로그인 결과"
+                                    }""")))
     public ResponseEntity<CommonResponse> signIn(@RequestBody @Valid SignInRequest signInRequest) {
         LOG.info("signIn email: {}" + signInRequest.getEmail());
         return ResponseEntity.ok()
@@ -99,13 +101,14 @@ public class UserController {
                     schema = @Schema(implementation = CommonResponse.class),
                     examples = @ExampleObject(
                             name = "example",
-                            value = "{\n" +
-                                    "  \"statusCode\": \"200\",\n" +
-                                    "  \"data\": {\n" +
-                                    "    \"Boolean\"\n" +
-                                    "  },\n" +
-                                    "  \"message\": \"로그아웃 결과\"\n" +
-                                    "}")))
+                            value = """
+                                    {
+                                      "statusCode": "200",
+                                      "data": {
+                                        "Boolean"
+                                      },
+                                      "message": "로그아웃 결과"
+                                    }""")))
     public ResponseEntity<CommonResponse> signOut(@RequestBody SignOutRequest signOutRequest) {
         LOG.info("signOut email: {}" + signOutRequest.getEmail());
         return ResponseEntity.ok()
@@ -125,13 +128,14 @@ public class UserController {
                     schema = @Schema(implementation = CommonResponse.class),
                     examples = @ExampleObject(
                             name = "example",
-                            value = "{\n" +
-                                    "  \"statusCode\": \"200\",\n" +
-                                    "  \"data\": {\n" +
-                                    "    \"accessToken\" : \"string\",\n" +
-                                    "  },\n" +
-                                    "  \"message\": \"access token 재발급 결과\"\n" +
-                                    "}")))
+                            value = """
+                                    {
+                                      "statusCode": "200",
+                                      "data": {
+                                        "accessToken" : "string",
+                                      },
+                                      "message": "access token 재발급 결과"
+                                    }""")))
     public ResponseEntity<CommonResponse> reissueAccessToken(@RequestBody ReissueRequest reissueRequest) {
         LOG.info("reissueAccessToken email: {}" + reissueRequest.getEmail());
         LOG.info("reissueAccessToken refreshToken: {}" + reissueRequest.getRefreshToken().getRefreshToken());
