@@ -11,6 +11,10 @@ import com.life.muna.user.dto.SignUpRequest;
 import com.life.muna.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,44 +36,110 @@ public class UserController {
 
     @ApiOperation(value = "회원 가입")
     @PostMapping("/signUp")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = "{\n" +
+                                    "  \"statusCode\": \"200\",\n" +
+                                    "  \"data\": {\n" +
+                                    "    \"int\"\n" +
+                                    "  },\n" +
+                                    "  \"message\": \"회원 가입 결과\"\n" +
+                                    "}")))
     public ResponseEntity<CommonResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
+        LOG.info("signUp email: {}" + signUpRequest.getEmail());
+        LOG.info("signUp phone: {}" + signUpRequest.getPhone());
+        LOG.info("signUp nickname: {}" + signUpRequest.getNickname());
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
                         .data(userService.signUp(signUpRequest))
-                        .message("회원 가입 성공").build());
+                        .message("회원 가입 결과").build());
     }
 
     @ApiOperation(value = "로그인")
     @PostMapping("/signIn")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = "{\n" +
+                                    "  \"statusCode\": \"200\",\n" +
+                                    "  \"data\": {\n" +
+                                    "    \"accessToken\" : \"string\",\n" +
+                                    "    \"refreshToken\" : \"string\"\n" +
+                                    "  },\n" +
+                                    "  \"message\": \"로그인 결과\"\n" +
+                                    "}")))
     public ResponseEntity<CommonResponse> signIn(@RequestBody @Valid SignInRequest signInRequest) {
+        LOG.info("signIn email: {}" + signInRequest.getEmail());
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
                         .data(userService.signIn(signInRequest))
-                        .message("로그인 성공").build());
+                        .message("로그인 결과").build());
     }
 
     @ApiOperation(value = "로그아웃")
     @PostMapping("/signOut")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = "{\n" +
+                                    "  \"statusCode\": \"200\",\n" +
+                                    "  \"data\": {\n" +
+                                    "    \"Boolean\"\n" +
+                                    "  },\n" +
+                                    "  \"message\": \"로그아웃 결과\"\n" +
+                                    "}")))
     public ResponseEntity<CommonResponse> signOut(@RequestBody SignOutRequest signOutRequest) {
+        LOG.info("signOut email: {}" + signOutRequest.getEmail());
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
                         .data(refreshTokenRepository.delete(signOutRequest.getEmail()))
-                        .message("로그아웃").build());
+                        .message("로그아웃 결과").build());
     }
 
     @ApiOperation(value = "Access Token 재발급")
     @PostMapping("/reissue")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = "{\n" +
+                                    "  \"statusCode\": \"200\",\n" +
+                                    "  \"data\": {\n" +
+                                    "    \"accessToken\" : \"string\",\n" +
+                                    "  },\n" +
+                                    "  \"message\": \"access token 재발급 결과\"\n" +
+                                    "}")))
     public ResponseEntity<CommonResponse> reissueAccessToken(@RequestBody ReissueRequest reissueRequest) {
-        System.out.println("email: {}" + reissueRequest.getEmail());
-        System.out.println("refreshToken: {}" + reissueRequest.getRefreshToken());
+        LOG.info("reissueAccessToken email: {}" + reissueRequest.getEmail());
+        LOG.info("reissueAccessToken refreshToken: {}" + reissueRequest.getRefreshToken().getRefreshToken());
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
                         .data(tokenProvider.createAccessToken(reissueRequest.getEmail(), reissueRequest.getRefreshToken()))
-                        .message("access token 재발급").build());
+                        .message("access token 재발급 결과").build());
     }
 
 }
