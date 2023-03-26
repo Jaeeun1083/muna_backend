@@ -12,7 +12,7 @@ public enum ErrorCode {
     NOT_LOGIN_USER(400, "로그인 된 계정이 아닙니다."),
 
     /*403 FORBIDDEN 권한 인증 실패 */
-    MISMATCH_MEMBER(403, "계정 정보가 일치하지 않습니다."),
+    MISMATCH_MEMBER(403, "비밀번호가 일치하지 않습니다."),
 
     /*404 NOT FOUND 잘못된 리소스 접근*/
     NOT_FOUND_MEMBER(404, "계정을 찾을 수 없습니다."),
