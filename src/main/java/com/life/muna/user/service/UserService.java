@@ -8,9 +8,13 @@ import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.common.error.exception.InputFieldException;
 import com.life.muna.user.domain.User;
 import com.life.muna.user.dto.SignInRequest;
+import com.life.muna.user.dto.SignInResponse;
 import com.life.muna.user.dto.SignUpRequest;
+import com.life.muna.user.dto.UserProfileResponse;
 import com.life.muna.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -32,11 +36,23 @@ public class UserService {
         return signUpResult == 1;
     }
 
-    public TokenResponse signIn(SignInRequest signInRequest) {
-        User user = userMapper.getUserByEmail(signInRequest);
+    public SignInResponse signIn(SignInRequest signInRequest) {
+        User user = userMapper.getUserByEmail(signInRequest.getEmail());
         if (user == null) throw new InputFieldException(ErrorCode.NOT_FOUND_MEMBER, signInRequest.getEmail());
         checkPassword(user, signInRequest.getPassword());
-        return jwtTokenProvider.createToken(user.getEmail());
+        return new SignInResponse(user.getUserCode(), jwtTokenProvider.createToken(user.getEmail()));
+    }
+
+    public UserProfileResponse getUserProfile(int userCode, String email) {
+        User user = userMapper.getUserByUserCode(userCode);
+        if (user == null) throw new InputFieldException(ErrorCode.NOT_FOUND_MEMBER, String.valueOf(userCode));
+        if (!Objects.equals(user.getEmail(), email)) throw new InputFieldException(ErrorCode.INVALID_PARAMETER, String.valueOf(userCode));
+        return UserProfileResponse.builder()
+                .userCode(user.getUserCode())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .profileImage(user.getProfileImage())
+                .build();
     }
 
     private void checkPassword(User user, String password) {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper {
     boolean existsByEmail(String userEmail);
-    User getUserByEmail(SignInRequest signInRequest);
+    User getUserByEmail(String userEmail);
+    User getUserByUserCode(int userCode);
     int signUp(User user);
 }

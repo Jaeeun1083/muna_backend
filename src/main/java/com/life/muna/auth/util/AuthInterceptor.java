@@ -1,5 +1,6 @@
 package com.life.muna.auth.util;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -19,7 +20,10 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = extractor.extract(request);
-        return tokenProvider.validateToken(token);
+        Claims claims =  tokenProvider.validateToken(token);
+        String email = claims.getSubject();
+        request.setAttribute("email", email);
+        return true;
     }
 
 }

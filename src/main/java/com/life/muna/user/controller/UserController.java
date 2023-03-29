@@ -1,6 +1,7 @@
 package com.life.muna.user.controller;
 
 import com.life.muna.auth.dto.RefreshToken;
+import com.life.muna.auth.dto.UnLock;
 import com.life.muna.auth.repository.RefreshTokenRepository;
 import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.common.dto.CommonResponse;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +42,7 @@ public class UserController {
     /**
      * 회원가입 API
      * */
+    @UnLock
     @ApiOperation(value = "회원 가입")
     @PostMapping("/signUp")
     @ApiParam()
@@ -75,8 +78,9 @@ public class UserController {
     /**
      * 로그인 API
      * */
+    @UnLock
     @ApiOperation(value = "로그인")
-    @GetMapping("/signIn")
+    @PostMapping("/signIn")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -105,6 +109,7 @@ public class UserController {
     /**
      * 로그아웃 API
      * */
+    @UnLock
     @ApiOperation(value = "로그아웃")
     @PostMapping("/signOut")
     @ApiResponse(
@@ -137,6 +142,7 @@ public class UserController {
     /**
      * Access Token 재발급 API
      * */
+    @UnLock
     @ApiOperation(value = "Access Token 재발급")
     @PostMapping("/reissue")
     @ApiResponse(
@@ -163,6 +169,36 @@ public class UserController {
                         .statusCode(HttpStatus.OK.value())
                         .data(tokenProvider.createAccessToken(reissueRequest.getEmail(), new RefreshToken(reissueRequest.getRefreshToken())))
                         .message("access token 재발급 결과").build());
+    }
+
+    @ApiOperation(value = "유저 정보 조회")
+    @GetMapping("/{userCode}")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                        {
+                                          "statusCode": "200",
+                                          "data": {
+                                            "email" : "muna@munaApp.com",
+                                            "nickname" : "마루도키"
+                                            "profileImage" : "IMG_1673_(2)",
+                                          },
+                                          "message": "유저 정보 조회 결과"
+                                        }""")))
+    public ResponseEntity<CommonResponse> getUserProfile(@PathVariable int userCode,  HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+        LOG.info("getUserProfile email: " + email);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(userService.getUserProfile(userCode, email))
+                        .message("유저 정보 조회 결과").build());
     }
 
 }
