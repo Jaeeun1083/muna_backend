@@ -24,11 +24,12 @@ public class UserService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public int signUp(SignUpRequest signUpRequest) {
+    public Boolean signUp(SignUpRequest signUpRequest) {
         boolean isExistsUser = userMapper.existsByEmail(signUpRequest.getEmail());
         if (isExistsUser) throw new InputFieldException(ErrorCode.ALREADY_EXISTS_USER, signUpRequest.getEmail());
         User user = signUpRequest.toEntity(signUpRequest, passwordEncoder);
-        return userMapper.signUp(user);
+        int signUpResult = userMapper.signUp(user);
+        return signUpResult == 1;
     }
 
     public TokenResponse signIn(SignInRequest signInRequest) {

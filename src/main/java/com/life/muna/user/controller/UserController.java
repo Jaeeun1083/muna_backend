@@ -11,6 +11,7 @@ import com.life.muna.user.dto.SignUpRequest;
 import com.life.muna.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,6 +42,7 @@ public class UserController {
      * */
     @ApiOperation(value = "회원 가입")
     @PostMapping("/signUp")
+    @ApiParam()
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -52,7 +54,7 @@ public class UserController {
                                     {
                                       "statusCode": "200",
                                       "data": {
-                                        "userCode" : 1
+                                        "result": true
                                       },
                                       "message": "회원 가입 결과"
                                     }""")))
@@ -60,14 +62,14 @@ public class UserController {
         LOG.info("signUp email: " + signUpRequest.getEmail());
         LOG.info("signUp phone: " + signUpRequest.getPhone());
         LOG.info("signUp nickname: " + signUpRequest.getNickname());
-        Map<String, Integer> data = new HashMap<String, Integer>();
-        Integer result = userService.signUp(signUpRequest);
+        Map<String, Boolean> data = new HashMap<String, Boolean>();
+        Boolean result = userService.signUp(signUpRequest);
         data.put("userCode", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(data)
-                        .message("회원 가입 결과").build());
+                        .data(result)
+                        .message(signUpRequest.getEmail() + "의 회원 가입 결과").build());
     }
 
     /**
