@@ -8,10 +8,10 @@ public class UserProfileResponse {
     private int userCode;
     private String email;
     private String nickname;
-    private String profileImage;
+    private byte[] profileImage;
 
     @Builder
-    public UserProfileResponse(int userCode, String email, String nickname, String profileImage) {
+    public UserProfileResponse(int userCode, String email, String nickname, byte[] profileImage) {
         this.userCode = userCode;
         this.email = email;
         this.nickname = nickname;

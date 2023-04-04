@@ -12,7 +12,7 @@ public class User {
     private String password;
     private String nickname;
     private String loginType;
-    private String profileImage;
+    private byte[] profileImage;
     private String firebaseToken;
     private String phone;
     private String address;
@@ -20,7 +20,7 @@ public class User {
     private Date updateDate;
 
     @Builder
-    public User(int userCode, String email, String password, String nickname, String loginType, String profileImage, String firebaseToken, String phone, String address, Date insertDate, Date updateDate) {
+    public User(int userCode, String email, String password, String nickname, String loginType, byte[] profileImage, String firebaseToken, String phone, String address, Date insertDate, Date updateDate) {
         this.userCode = userCode;
         this.email = email;
         this.password = password;

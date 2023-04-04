@@ -32,9 +32,8 @@ public class SignUpRequest {
     @NotBlank(message = "로그인 타입은 필수 입력 값입니다.")
     private String loginType;
 
-    @ApiModelProperty(example = "IMG_1673_(2)", required = true)
-    @NotBlank(message = "이미지는 필수 입력 값입니다.")
-    private String profileImage;
+    @ApiModelProperty(hidden = true)
+    private byte[] profileImage;
 
     @ApiModelProperty(example = "01012345678", required = true)
     @NotBlank(message = "휴대폰 번호를 입력해주세요.")
@@ -50,6 +49,10 @@ public class SignUpRequest {
                 .profileImage(signUpRequest.getProfileImage())
                 .phone(signUpRequest.getPhone())
                 .build();
+    }
+
+    public void setProfileImage(byte[] profileImage) {
+        this.profileImage = profileImage;
     }
 
 }
