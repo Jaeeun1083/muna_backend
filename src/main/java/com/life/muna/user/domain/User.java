@@ -16,12 +16,12 @@ public class User {
     private byte[] profileImage;
     private String firebaseToken;
     private String phone;
-    private String address;
+    private Integer locationDongCd;
     private Date insertDate;
     private Date updateDate;
 
     @Builder
-    public User(Long userCode, String email, String password, String nickname, LoginType loginType, UserLevel userLevel, byte[] profileImage, String firebaseToken, String phone, String address, Date insertDate, Date updateDate) {
+    public User(Long userCode, String email, String password, String nickname, LoginType loginType, UserLevel userLevel, byte[] profileImage, String firebaseToken, String phone, Integer locationDongCd, Date insertDate, Date updateDate) {
         this.userCode = userCode;
         this.email = email;
         this.password = password;
@@ -31,7 +31,7 @@ public class User {
         this.profileImage = profileImage;
         this.firebaseToken = firebaseToken;
         this.phone = phone;
-        this.address = address;
+        this.locationDongCd = locationDongCd;
         this.insertDate = insertDate;
         this.updateDate = updateDate;
     }
