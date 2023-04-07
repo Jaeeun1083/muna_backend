@@ -47,7 +47,7 @@ public class JwtTokenProvider {
 
     public AccessToken createAccessToken(String email, RefreshToken refreshToken) {
         Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(email);
-        if(optionalRefreshToken.isEmpty()) throw new BusinessException(INVALID_PROVIDER);
+        if(optionalRefreshToken.isEmpty()) throw new BusinessException(INVALID_AUTH_TOKEN);
         if(!optionalRefreshToken.get().getRefreshToken().equals(refreshToken.getRefreshToken())) throw new BusinessException(INVALID_AUTH_TOKEN);
 //                .orElseThrow(new BusinessException(INVALID_PROVIDER));
         return new AccessToken(createToken(email, accessTokenValidityTime));
