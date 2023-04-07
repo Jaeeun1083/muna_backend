@@ -8,12 +8,12 @@
         SELECT COALESCE ((SELECT 1 FROM TB_USER WHERE EMAIL=#{email}), 0)
     </select>
 
-    <select id="getUserByEmail" parameterType="java.lang.String" resultType="com.life.muna.user.domain.User">
+    <select id="findUserByEmail" parameterType="java.lang.String" resultType="com.life.muna.user.domain.User">
         SELECT USER_CODE, EMAIL, PASSWORD, NICKNAME, LOGIN_TYPE, PROFILE_IMAGE, FIREBASE_TOKEN, PHONE, ADDRESS, INSERT_DATE, UPDATE_DATE
         FROM TB_USER WHERE EMAIL = #{email};
     </select>
 
-    <select id="getUserByUserCode" parameterType="Integer" resultType="com.life.muna.user.domain.User">
+    <select id="findUserByUserCode" parameterType="Long" resultType="com.life.muna.user.domain.User">
         SELECT USER_CODE, EMAIL, PASSWORD, NICKNAME, LOGIN_TYPE, PROFILE_IMAGE, FIREBASE_TOKEN, PHONE, ADDRESS, INSERT_DATE, UPDATE_DATE
         FROM TB_USER WHERE USER_CODE = #{userCode};
     </select>

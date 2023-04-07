@@ -7,11 +7,12 @@ import java.util.Date;
 
 @Getter
 public class User {
-    private int userCode;
+    private Long userCode;
     private String email;
     private String password;
     private String nickname;
-    private String loginType;
+    private LoginType loginType;
+    private UserLevel userLevel;
     private byte[] profileImage;
     private String firebaseToken;
     private String phone;
@@ -20,12 +21,13 @@ public class User {
     private Date updateDate;
 
     @Builder
-    public User(int userCode, String email, String password, String nickname, String loginType, byte[] profileImage, String firebaseToken, String phone, String address, Date insertDate, Date updateDate) {
+    public User(Long userCode, String email, String password, String nickname, LoginType loginType, UserLevel userLevel, byte[] profileImage, String firebaseToken, String phone, String address, Date insertDate, Date updateDate) {
         this.userCode = userCode;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.loginType = loginType;
+        this.userLevel = userLevel;
         this.profileImage = profileImage;
         this.firebaseToken = firebaseToken;
         this.phone = phone;

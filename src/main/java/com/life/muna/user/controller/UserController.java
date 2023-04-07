@@ -67,11 +67,11 @@ public class UserController {
         LOG.info("signUp nickname: " + signUpRequest.getNickname());
         Map<String, Boolean> data = new HashMap<String, Boolean>();
         Boolean result = userService.signUp(signUpRequest);
-        data.put("userCode", result);
+        data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(result)
+                        .data(data)
                         .message(signUpRequest.getEmail() + "의 회원 가입 결과").build());
     }
 
@@ -191,7 +191,7 @@ public class UserController {
                                           },
                                           "message": "유저 정보 조회 결과"
                                         }""")))
-    public ResponseEntity<CommonResponse> getUserProfile(@PathVariable int userCode,  HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> getUserProfile(@PathVariable Long userCode,  HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
         LOG.info("getUserProfile email: " + email);
         return ResponseEntity.ok()

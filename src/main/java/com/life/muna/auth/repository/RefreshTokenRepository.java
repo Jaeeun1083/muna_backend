@@ -2,7 +2,7 @@ package com.life.muna.auth.repository;
 
 import com.life.muna.auth.dto.RefreshToken;
 import com.life.muna.common.error.ErrorCode;
-import com.life.muna.common.error.exception.InputFieldException;
+import com.life.muna.common.error.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -29,7 +29,7 @@ public class RefreshTokenRepository {
     }
 
     public Boolean delete(final String email) {
-        if (findByEmail(email).isEmpty()) throw new InputFieldException(ErrorCode.NOT_LOGIN_USER, email);
+        if (findByEmail(email).isEmpty()) throw new BusinessException(ErrorCode.NOT_LOGIN_USER);
         return redisTemplate.delete(email);
     }
 

@@ -1,7 +1,10 @@
 package com.life.muna.user.dto;
 
 import com.life.muna.auth.util.PasswordEncoder;
+import com.life.muna.common.util.Enum;
+import com.life.muna.user.domain.LoginType;
 import com.life.muna.user.domain.User;
+import com.life.muna.user.domain.UserLevel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
@@ -29,7 +32,7 @@ public class SignUpRequest {
     private String nickname;
 
     @ApiModelProperty(example = "EMAIL", required = true)
-    @NotBlank(message = "로그인 타입은 필수 입력 값입니다.")
+    @Enum(enumClass = LoginType.class, message = "로그인 타입이 올바르지 않습니다.")
     private String loginType;
 
     @ApiModelProperty(hidden = true)
@@ -45,7 +48,8 @@ public class SignUpRequest {
                 .email(signUpRequest.getEmail())
                 .password(passwordEncoder.encrypt(signUpRequest.getPassword()))
                 .nickname(signUpRequest.getNickname())
-                .loginType(signUpRequest.getLoginType())
+                .loginType(LoginType.fromTypeName(signUpRequest.getLoginType()))
+                .userLevel(UserLevel.BASIC)
                 .profileImage(signUpRequest.getProfileImage())
                 .phone(signUpRequest.getPhone())
                 .build();

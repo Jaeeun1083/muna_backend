@@ -6,12 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class SignInResponse {
-    private final int userCode;
+    private final Long userCode;
     private final TokenResponse token;
 
     @Builder
-    public SignInResponse(int userCode, TokenResponse tokenResponse) {
+    public SignInResponse(Long userCode, TokenResponse tokenResponse) {
         this.userCode = userCode;
         this.token = tokenResponse;
     }
+
 }

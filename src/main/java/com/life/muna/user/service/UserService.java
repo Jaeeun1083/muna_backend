@@ -4,7 +4,6 @@ import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.auth.util.PasswordEncoder;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
-import com.life.muna.common.error.exception.InputFieldException;
 import com.life.muna.user.domain.User;
 import com.life.muna.user.dto.SignInRequest;
 import com.life.muna.user.dto.SignInResponse;
@@ -48,19 +47,20 @@ public class UserService {
     }
 
     public SignInResponse signIn(SignInRequest signInRequest) {
-        User user = userMapper.getUserByEmail(signInRequest.getEmail());
+        User user = userMapper.findUserByEmail(signInRequest.getEmail());
         if (user == null) throw new BusinessException(ErrorCode.NOT_FOUND_MEMBER);
         checkPassword(user, signInRequest.getPassword());
         return new SignInResponse(user.getUserCode(), jwtTokenProvider.createToken(user.getEmail()));
     }
 
-    public UserProfileResponse getUserProfile(int userCode, String email) {
-        User user = userMapper.getUserByUserCode(userCode);
-        if (user == null) throw new InputFieldException(ErrorCode.NOT_FOUND_MEMBER, String.valueOf(userCode));
-        if (!Objects.equals(user.getEmail(), email)) throw new InputFieldException(ErrorCode.INVALID_PARAMETER, String.valueOf(userCode));
+    public UserProfileResponse getUserProfile(Long userCode, String email) {
+        User user = userMapper.findUserByUserCode(userCode);
+        if (user == null) throw new BusinessException(ErrorCode.NOT_FOUND_MEMBER);
+        if (!Objects.equals(user.getEmail(), email)) throw new BusinessException(ErrorCode.INVALID_PARAMETER);
         return UserProfileResponse.builder()
                 .userCode(user.getUserCode())
                 .email(user.getEmail())
+                .userLevel(user.getUserLevel())
                 .nickname(user.getNickname())
                 .profileImage(user.getProfileImage())
                 .build();
