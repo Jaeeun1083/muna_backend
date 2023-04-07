@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -47,15 +48,17 @@ public class UserService {
     }
 
     public SignInResponse signIn(SignInRequest signInRequest) {
-        User user = userMapper.findUserByEmail(signInRequest.getEmail());
-        if (user == null) throw new BusinessException(ErrorCode.NOT_FOUND_MEMBER);
+        Optional<User>  userOptional = userMapper.findUserByEmail(signInRequest.getEmail());
+        if (userOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_USER);
+        User user = userOptional.get();
         checkPassword(user, signInRequest.getPassword());
         return new SignInResponse(user.getUserCode(), jwtTokenProvider.createToken(user.getEmail()));
     }
 
     public UserProfileResponse getUserProfile(Long userCode, String email) {
-        User user = userMapper.findUserByUserCode(userCode);
-        if (user == null) throw new BusinessException(ErrorCode.NOT_FOUND_MEMBER);
+        Optional<User> userOptional = userMapper.findUserByUserCode(userCode);
+        if (userOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_USER);
+        User user = userOptional.get();
         if (!Objects.equals(user.getEmail(), email)) throw new BusinessException(ErrorCode.INVALID_PARAMETER);
         return UserProfileResponse.builder()
                 .userCode(user.getUserCode())
@@ -68,7 +71,7 @@ public class UserService {
 
     private void checkPassword(User user, String password) {
         if (!user.getPassword().equals(passwordEncoder.encrypt(password))) {
-            throw new BusinessException(ErrorCode.MISMATCH_MEMBER);
+            throw new BusinessException(ErrorCode.MISMATCH_USER);
         }
     }
 
