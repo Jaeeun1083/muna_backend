@@ -55,11 +55,10 @@ public class UserService {
         return new SignInResponse(user.getUserCode(), jwtTokenProvider.createToken(user.getEmail()));
     }
 
-    public UserProfileResponse getUserProfile(Long userCode, String email) {
+    public UserProfileResponse getUserProfile(Long userCode) {
         Optional<User> userOptional = userMapper.findUserByUserCode(userCode);
         if (userOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_USER);
         User user = userOptional.get();
-        if (!Objects.equals(user.getEmail(), email)) throw new BusinessException(ErrorCode.INVALID_PARAMETER);
         return UserProfileResponse.builder()
                 .userCode(user.getUserCode())
                 .email(user.getEmail())

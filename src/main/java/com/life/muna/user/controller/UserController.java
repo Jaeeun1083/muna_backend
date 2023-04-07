@@ -191,13 +191,11 @@ public class UserController {
                                           },
                                           "message": "유저 정보 조회 결과"
                                         }""")))
-    public ResponseEntity<CommonResponse> getUserProfile(@PathVariable Long userCode,  HttpServletRequest request) {
-        String email = (String) request.getAttribute("email");
-        LOG.info("getUserProfile email: " + email);
+    public ResponseEntity<CommonResponse> getUserProfile(@PathVariable Long userCode) {
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(userService.getUserProfile(userCode, email))
+                        .data(userService.getUserProfile(userCode))
                         .message("유저 정보 조회 결과").build());
     }
 
