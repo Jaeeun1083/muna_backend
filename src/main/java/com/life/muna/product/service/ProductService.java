@@ -1,11 +1,11 @@
 package com.life.muna.product.service;
 
+import com.life.muna.chat.mapper.ChatReqMapper;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.location.domain.Location;
 import com.life.muna.location.mapper.LocationMapper;
 import com.life.muna.product.domain.LocationRange;
-import com.life.muna.product.domain.ProductDetail;
 import com.life.muna.product.dto.ProductDetailResponse;
 import com.life.muna.product.dto.ProductListRequest;
 import com.life.muna.product.dto.ProductListResponse;
@@ -21,15 +21,17 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-    private final Logger LOG = LoggerFactory.getLogger(ProductService.class);
-
     private ProductMapper productMapper;
     private UserMapper userMapper;
+    private ChatReqMapper chatReqMapper;
     private LocationMapper locationMapper;
 
-    public ProductService(ProductMapper productMapper, UserMapper userMapper, LocationMapper locationMapper) {
+    private final Logger LOG = LoggerFactory.getLogger(ProductService.class);
+
+    public ProductService(ProductMapper productMapper, UserMapper userMapper, ChatReqMapper chatReqMapper, LocationMapper locationMapper) {
         this.productMapper = productMapper;
         this.userMapper = userMapper;
+        this.chatReqMapper = chatReqMapper;
         this.locationMapper = locationMapper;
     }
 
@@ -69,14 +71,17 @@ public class ProductService {
     }
 
     public ProductDetailResponse getProduct(Long userCode, Long productCode) {
-        Optional<ProductDetail> productDetailOptional = productMapper.findProductDetailByProductCode(productCode);
+        Optional<ProductDetailResponse> productDetailOptional = productMapper.findProductDetailByProductCode(productCode);
         if (productDetailOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
 
-        ProductDetail productDetail = productDetailOptional.get();
-        Long sellerCode = productDetail.getUserCode();
+        ProductDetailResponse productDetailResponse = productDetailOptional.get();
+        Long sellerCode = productDetailResponse.getUserCode();
         Optional<User> sellerOptional = userMapper.findUserByUserCode(sellerCode);
         if(sellerOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_SELLER);
-        return ProductDetailResponse.to(sellerOptional.get(), productDetail);
+        productDetailResponse.setSellerData(sellerOptional.get());
+
+        boolean isRequested = chatReqMapper.existsByUserCodeAndProductCode(userCode, productCode);
+        return productDetailResponse.setRequested(isRequested);
     }
 
     private Integer subStringValue(int beginIndex, int endIndex, Integer value) {

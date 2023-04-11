@@ -64,7 +64,7 @@ public class ProductController {
     }
 
     @ApiOperation(value = "상품 상세 조회")
-    @GetMapping("/{productCode}")
+    @PostMapping("/{productCode}")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -80,17 +80,25 @@ public class ProductController {
                                         "productCode": 1,
                                         "content": "컨텐트1",
                                         "imageLink": "이미지링크1",
+                                        "imageCnt": 0,
                                         "likes": 0,
                                         "views": 0,
-                                        "userProfileImage": "",
-                                        "userNickname": "마루도키",
-                                        "userLevel": "BASIC",
+                                        "location": "서울특별시 은평구 신사1동",
+                                        "category": "C0002",
+                                        "thumbnail": "",
+                                        "productStatus": "1",
+                                        "mcoin": 1,
+                                        "reqCnt": 0,
                                         "insertDate": "2023-04-07T01:44:33.000+00:00",
-                                        "updateDate": "2023-04-07T01:44:33.000+00:00"
+                                        "updateDate": "2023-04-07T01:44:33.000+00:00",
+                                        "userNickname": "마루도키",
+                                        "userProfileImage": "",
+                                        "userLevel": "BASIC",
+                                        "requested": false,
                                       }
                                       "message": "상품 상세 조회"
                                     }""")))
-    public ResponseEntity<CommonResponse> getProduct(@RequestParam Long userCode, @PathVariable Long productCode) {
+    public ResponseEntity<CommonResponse> getProduct(@RequestHeader Long userCode, @PathVariable Long productCode) {
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())

@@ -3,35 +3,44 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.life.muna.product.mapper.ProductMapper">
-    <select id="findProductList" parameterType="com.life.muna.product.dto.ProductListRequest" resultType="com.life.muna.product.domain.Product">
-        SELECT *
-        FROM TB_PRODUCT
-        WHERE PRODUCT_CODE > #{startProductCode}
-        <if test="locationRange == 'SI' or locationRange == 'GU'">
-            AND LOCATION_DONG_CD LIKE CONCAT(#{locationCode}, '%')
+    <select id="findProductList" parameterType="com.life.muna.product.dto.ProductListRequest" resultType="com.life.muna.product.dto.ProductListResponse">
+        SELECT p.PRODUCT_CODE, CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM),
+        p.CATEGORY,  p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE
+        FROM TB_PRODUCT p
+        JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
+        WHERE PRODUCT_CODE &gt;= #{startProductCode}
+        <if test="locationRange == 'L001' or locationRange == 'L002'">
+            AND p.LOCATION_DONG_CD LIKE CONCAT(#{locationCode}, '%')
         </if>
-        <if test="locationRange == 'DONG'">
-            AND LOCATION_DONG_CD = #{locationCode}
+        <if test="locationRange == 'L003'">
+            AND p.LOCATION_DONG_CD = #{locationCode}
         </if>
-        <if test="category != 'ALL'">
-            AND CATEGORY = #{category}
+        <if test="category.toString() != 'C000'">
+            AND p.CATEGORY = #{category}
         </if>
         <if test="searchKeyword != null">
-            AND TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
+            AND p.TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
         </if>
         <if test="productStatus != null">
-            AND PRODUCT_STATUS = #{productStatus}
+            AND p.PRODUCT_STATUS = #{productStatus}
         </if>
-        <if test="mcoinSort != 'NONE'">
-            ORDER BY MCOIN ${mcoinSort}
+        <if test="mcoinSort == true">
+            ORDER BY p.MCOIN ASC
+        </if>
+        <if test="mcoinSort == false">
+            ORDER BY p.MCOIN DESC
         </if>
         LIMIT #{productDataCnt}
     </select>
 
-    <select id="findProductDetailByProductCode" parameterType="Long" resultType="com.life.muna.product.domain.ProductDetail">
-        SELECT *
-        FROM TB_PRODUCT_DETAIL
-        WHERE PRODUCT_CODE = #{productCode}
+    <select id="findProductDetailByProductCode" parameterType="Long" resultType="com.life.muna.product.dto.ProductDetailResponse">
+        SELECT d.PRODUCT_CODE, d.CONTENT, d.IMAGE_LINK, d.IMAGE_CNT, d.LIKES, d.VIEWS,
+               CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM), p.CATEGORY, p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE,
+               p.USER_CODE
+        FROM TB_PRODUCT p
+                 JOIN TB_PRODUCT_DETAIL d ON p.PRODUCT_CODE = d.PRODUCT_CODE
+                 JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
+        WHERE p.PRODUCT_CODE = #{productCode}
     </select>
 
 </mapper>

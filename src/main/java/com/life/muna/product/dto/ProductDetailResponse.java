@@ -1,6 +1,6 @@
 package com.life.muna.product.dto;
 
-import com.life.muna.product.domain.ProductDetail;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.life.muna.user.domain.User;
 import com.life.muna.user.domain.UserLevel;
 import lombok.Builder;
@@ -13,41 +13,55 @@ public class ProductDetailResponse {
     private Long productCode;
     private String content;
     private String imageLink;
+    private Integer imageCnt;
     private Integer likes;
     private Integer views;
-    private byte[] userProfileImage;
-    private String userNickname;
-    private UserLevel userLevel;
+    private String location;
+    private String category;
+    private String title;
+    private String thumbnail;
+    private boolean productStatus;
+    private Integer mcoin;
+    private Integer reqCnt;
     private Date insertDate;
     private Date updateDate;
+    @JsonIgnore
+    private Long userCode;
+    private String userNickname;
+    private byte[] userProfileImage;
+    private UserLevel userLevel;
+    private boolean isRequested;
 
     @Builder
-    private ProductDetailResponse(Long productCode, String content, String imageLink, Integer likes, Integer views, byte[] userProfileImage, String userNickname, UserLevel userLevel, Date insertDate, Date updateDate) {
+    public ProductDetailResponse(Long productCode, String content, String imageLink, Integer imageCnt, Integer likes, Integer views, String location, String category, String title, String thumbnail, boolean productStatus, Integer mcoin, Integer reqCnt, Date insertDate, Date updateDate, Long userCode) {
         this.productCode = productCode;
         this.content = content;
         this.imageLink = imageLink;
+        this.imageCnt = imageCnt;
         this.likes = likes;
         this.views = views;
-        this.userProfileImage = userProfileImage;
-        this.userNickname = userNickname;
-        this.userLevel = userLevel;
+        this.location = location;
+        this.category = category;
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.productStatus = productStatus;
+        this.mcoin = mcoin;
+        this.reqCnt = reqCnt;
         this.insertDate = insertDate;
         this.updateDate = updateDate;
+        this.userCode = userCode;
     }
 
-    public static ProductDetailResponse to(User user, ProductDetail productDetail) {
-        return ProductDetailResponse.builder()
-                .productCode(productDetail.getProductCode())
-                .content(productDetail.getContent())
-                .imageLink(productDetail.getImageLink())
-                .likes(productDetail.getLikes())
-                .views(productDetail.getViews())
-                .userProfileImage(user.getProfileImage())
-                .userNickname(user.getNickname())
-                .userLevel(user.getUserLevel())
-                .insertDate(productDetail.getInsertDate())
-                .updateDate(productDetail.getUpdateDate())
-                .build();
+    public ProductDetailResponse setSellerData (User user) {
+        this.userProfileImage = user.getProfileImage();
+        this.userNickname = user.getNickname();
+        this.userLevel = user.getUserLevel();
+        return this;
+    }
+
+    public ProductDetailResponse setRequested(boolean isRequested) {
+        this.isRequested = isRequested;
+        return this;
     }
 
 }
