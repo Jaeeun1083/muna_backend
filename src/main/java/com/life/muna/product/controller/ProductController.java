@@ -42,9 +42,8 @@ public class ProductController {
                                       "data": [
                                         {
                                           "productCode": 1,
-                                          "userCode": 35,
-                                          "locationDongCd": 1112065,
-                                          "category": "ELECTRONICS",
+                                          "location": "서울특별시 은평구 증산동",
+                                          "category": "C0002",
                                           "title": "타이틀1",
                                           "thumbnail": "",
                                           "productStatus": true,
@@ -56,7 +55,7 @@ public class ProductController {
                                       ],
                                       "message": "상품 목록 조회"
                                     }""")))
-    public ResponseEntity<CommonResponse> getProductList(@Valid ProductListRequest productListRequest) {
+    public ResponseEntity<CommonResponse> getProductList(@RequestBody @Valid ProductListRequest productListRequest) {
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())

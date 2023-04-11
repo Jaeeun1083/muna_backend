@@ -2,47 +2,66 @@ package com.life.muna.product.service;
 
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
+import com.life.muna.location.domain.Location;
+import com.life.muna.location.mapper.LocationMapper;
 import com.life.muna.product.domain.LocationRange;
-import com.life.muna.product.domain.Product;
 import com.life.muna.product.domain.ProductDetail;
 import com.life.muna.product.dto.ProductDetailResponse;
 import com.life.muna.product.dto.ProductListRequest;
+import com.life.muna.product.dto.ProductListResponse;
 import com.life.muna.product.mapper.ProductMapper;
 import com.life.muna.user.domain.User;
 import com.life.muna.user.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductService {
-    private ProductMapper productMapper;
-    private UserMapper userMapper;
     private final Logger LOG = LoggerFactory.getLogger(ProductService.class);
 
-    public ProductService(ProductMapper productMapper, UserMapper userMapper) {
+    private ProductMapper productMapper;
+    private UserMapper userMapper;
+    private LocationMapper locationMapper;
+
+    public ProductService(ProductMapper productMapper, UserMapper userMapper, LocationMapper locationMapper) {
         this.productMapper = productMapper;
         this.userMapper = userMapper;
+        this.locationMapper = locationMapper;
     }
 
-    public List<Product> getProductList(ProductListRequest productListRequest) {
-        List<Product> productList;
-        LocationRange locationRange = LocationRange.fromLocationRange(productListRequest.getLocationRange());
-        Integer locationCode = productListRequest.getLocationCode();
-        if ((locationRange != LocationRange.ALL) && (locationCode == null)) throw new BusinessException(ErrorCode.UNPROCESSABLE_PRODUCT_LOCATION);
-        switch (locationRange) {
-            case SI -> {
-                Integer subStringValue = subStringValue(0, 2, locationCode);
-                productListRequest.setLocationCode(subStringValue);
+    public List<ProductListResponse> getProductList(ProductListRequest productListRequest) {
+        List<ProductListResponse> productList;
+        LocationRange locationRange = LocationRange.fromCode(productListRequest.getLocationRange());
+
+        String locationNm = productListRequest.getLocation();
+        if (locationRange != LocationRange.L000 && locationNm == null) {
+            throw new BusinessException(ErrorCode.UNPROCESSABLE_PRODUCT_LOCATION);
+        }
+
+        if (locationNm != null) {
+            String[] tokens = locationNm.split(" ");
+            if (tokens.length < 3 || tokens.length > 4) {
+                throw new BusinessException(ErrorCode.INVALID_LOCATION);
             }
-            case GU -> {
-                Integer subStringValue = subStringValue(0, 5, locationCode);
-                productListRequest.setLocationCode(subStringValue);
-            }
+
+            String locationSiNm = tokens[0];
+            String locationGuNm = tokens[1];
+            String locationDongNm = tokens[tokens.length -1];
+
+            Optional<Location> locationOptional = locationMapper.findByLocationNm(locationSiNm, locationGuNm, locationDongNm);
+            Location location = locationOptional.orElseThrow(() -> new BusinessException(ErrorCode.INVALID_LOCATION));
+
+            Integer locationCode = switch (locationRange) {
+                case L001 -> subStringValue(0, 2, location.getLocationDongCd());
+                case L002 -> subStringValue(0, 5, location.getLocationDongCd());
+                case L003 -> location.getLocationDongCd();
+                default -> null;
+            };
+            productListRequest.setLocationCode(locationCode);
         }
 
         productList = productMapper.findProductList(productListRequest);

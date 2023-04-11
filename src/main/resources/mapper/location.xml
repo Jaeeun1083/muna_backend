@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.life.muna.location.mapper.LocationMapper">
+
+    <select id="findByLocationNm" parameterType="String" resultType="com.life.muna.location.domain.Location">
+        SELECT LOCATION_SI_CD, LOCATION_SI_NM, LOCATION_GU_CD, LOCATION_GU_NM, LOCATION_DONG_CD, LOCATION_DONG_NM
+        FROM TB_LOCATION
+        WHERE LOCATION_DONG_NM = #{locationDongNm}
+          AND LOCATION_GU_NM LIKE CONCAT('%', #{locationGuNm}, '%')
+          AND LOCATION_SI_NM = #{locationSiNm}
+    </select>
+
+</mapper>
