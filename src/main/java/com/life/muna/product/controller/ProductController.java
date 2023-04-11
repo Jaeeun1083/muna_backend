@@ -27,7 +27,7 @@ public class ProductController {
     private final ProductService productService;
 
     @ApiOperation(value = "상품 목록 조회")
-    @GetMapping("")
+    @PostMapping("")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
