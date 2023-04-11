@@ -21,7 +21,6 @@ public enum ErrorCode {
      **/
     INVALID_AUTH_TOKEN(401, "유효한 인증 정보가 아닙니다."),
     NOT_FOUND_BY_USER_CODE(404, "해당 유저 코드로 계정을 찾을 수 없습니다."),
-    NECESSARY_USER_CODE(400, "헤더에 user code 값은 필수입니다."),
     MISMATCH_TOKEN_USER_CODE(400, "토큰 값과 유저 코드 값이 일치하지 않습니다."),
 
 

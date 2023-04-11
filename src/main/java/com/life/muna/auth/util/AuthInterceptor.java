@@ -1,5 +1,7 @@
 package com.life.muna.auth.util;
 
+import com.life.muna.auth.dto.RefreshToken;
+import com.life.muna.auth.repository.RefreshTokenRepository;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.user.mapper.UserMapper;
@@ -9,17 +11,20 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
     private AuthorizationExtractor extractor;
     private JwtTokenProvider tokenProvider;
     private UserMapper userMapper;
+    private RefreshTokenRepository refreshTokenRepository;
 
-    public AuthInterceptor(AuthorizationExtractor extractor, JwtTokenProvider tokenProvider, UserMapper userMapper) {
+    public AuthInterceptor(AuthorizationExtractor extractor, JwtTokenProvider tokenProvider, UserMapper userMapper, RefreshTokenRepository refreshTokenRepository) {
         this.extractor = extractor;
         this.tokenProvider = tokenProvider;
         this.userMapper = userMapper;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Override
@@ -28,13 +33,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         Claims claims =  tokenProvider.validateToken(token);
         String emailFromToken = claims.getSubject();
 
-        String userCodeFromReq = request.getHeader("userCode");
-        if (userCodeFromReq ==  null || userCodeFromReq.isEmpty()) throw new BusinessException(ErrorCode.NECESSARY_USER_CODE);
-        Long userCode = Long.parseLong(userCodeFromReq);
-
-        String findEmail = userMapper.findEmailByUserCode(userCode);
-        if (findEmail == null || findEmail.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE);
-        if (!findEmail.equals(emailFromToken)) throw new BusinessException(ErrorCode.MISMATCH_TOKEN_USER_CODE);
+        /**
+        * 토큰에 저장된 이메일로 로그아웃된 회원인지 확인
+        * */
+        Optional<RefreshToken> rt = refreshTokenRepository.findByEmail(emailFromToken);
+        if(rt.isEmpty()) throw new BusinessException(ErrorCode.INVALID_AUTH_TOKEN);
+        request.setAttribute("email", emailFromToken);
         return true;
     }
 

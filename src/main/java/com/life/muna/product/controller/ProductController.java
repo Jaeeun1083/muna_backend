@@ -1,6 +1,7 @@
 package com.life.muna.product.controller;
 
 import com.life.muna.common.dto.CommonResponse;
+import com.life.muna.product.dto.ProductDetailRequest;
 import com.life.muna.product.dto.ProductListRequest;
 import com.life.muna.product.service.ProductService;
 import io.swagger.annotations.Api;
@@ -27,7 +28,7 @@ public class ProductController {
     private final ProductService productService;
 
     @ApiOperation(value = "상품 목록 조회")
-    @PostMapping("")
+    @PostMapping("/list")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -64,7 +65,7 @@ public class ProductController {
     }
 
     @ApiOperation(value = "상품 상세 조회")
-    @PostMapping("/{productCode}")
+    @PostMapping("/details")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -98,11 +99,11 @@ public class ProductController {
                                       }
                                       "message": "상품 상세 조회"
                                     }""")))
-    public ResponseEntity<CommonResponse> getProduct(@RequestHeader Long userCode, @PathVariable Long productCode) {
+    public ResponseEntity<CommonResponse> getProduct(@RequestBody @Valid ProductDetailRequest productDetailRequest) {
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(productService.getProduct(userCode, productCode))
+                        .data(productService.getProduct(productDetailRequest))
                         .message("상품 상세 조회").build());
 
     }

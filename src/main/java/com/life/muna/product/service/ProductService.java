@@ -6,6 +6,7 @@ import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.location.domain.Location;
 import com.life.muna.location.mapper.LocationMapper;
 import com.life.muna.product.domain.LocationRange;
+import com.life.muna.product.dto.ProductDetailRequest;
 import com.life.muna.product.dto.ProductDetailResponse;
 import com.life.muna.product.dto.ProductListRequest;
 import com.life.muna.product.dto.ProductListResponse;
@@ -70,7 +71,9 @@ public class ProductService {
         return productList;
     }
 
-    public ProductDetailResponse getProduct(Long userCode, Long productCode) {
+    public ProductDetailResponse getProduct(ProductDetailRequest productDetailRequest) {
+        Long userCode = productDetailRequest.getUserCode();
+        Long productCode = productDetailRequest.getProductCode();
         Optional<ProductDetailResponse> productDetailOptional = productMapper.findProductDetailByProductCode(productCode);
         if (productDetailOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
 

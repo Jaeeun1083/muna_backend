@@ -12,6 +12,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class ProductListRequest {
+    @ApiModelProperty(example = "25", required = true)
+    @NotNull(message = "유저 코드는 필수 입력 값 입니다.")
+    private Long userCode;
+
     @ApiModelProperty(example = "0", required = true)
     @NotNull(message = "상품 시작 코드는 필수 입력 값 입니다.")
     private Long startProductCode;
