@@ -17,13 +17,11 @@ import java.util.Optional;
 public class AuthInterceptor implements HandlerInterceptor {
     private AuthorizationExtractor extractor;
     private JwtTokenProvider tokenProvider;
-    private UserMapper userMapper;
     private RefreshTokenRepository refreshTokenRepository;
 
-    public AuthInterceptor(AuthorizationExtractor extractor, JwtTokenProvider tokenProvider, UserMapper userMapper, RefreshTokenRepository refreshTokenRepository) {
+    public AuthInterceptor(AuthorizationExtractor extractor, JwtTokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository) {
         this.extractor = extractor;
         this.tokenProvider = tokenProvider;
-        this.userMapper = userMapper;
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
