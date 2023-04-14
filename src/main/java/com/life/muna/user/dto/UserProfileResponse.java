@@ -1,6 +1,6 @@
 package com.life.muna.user.dto;
 
-import com.life.muna.user.domain.UserLevel;
+import com.life.muna.user.domain.enums.UserLevel;
 import lombok.Builder;
 import lombok.Getter;
 

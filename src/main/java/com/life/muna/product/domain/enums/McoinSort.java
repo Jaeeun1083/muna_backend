@@ -1,4 +1,4 @@
-package com.life.muna.product.domain;
+package com.life.muna.product.domain.enums;
 
 import java.util.Arrays;
 

@@ -2,7 +2,7 @@ package com.life.muna.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.life.muna.user.domain.User;
-import com.life.muna.user.domain.UserLevel;
+import com.life.muna.user.domain.enums.UserLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,7 +20,7 @@ public class ProductDetailResponse {
     private String category;
     private String title;
     private String thumbnail;
-    private boolean productStatus;
+    private Boolean productStatus;
     private Integer mcoin;
     private Integer reqCnt;
     private Date insertDate;
@@ -30,7 +30,7 @@ public class ProductDetailResponse {
     private String userNickname;
     private byte[] userProfileImage;
     private UserLevel userLevel;
-    private boolean isRequested;
+    private Boolean isRequested;
 
     @Builder
     public ProductDetailResponse(Long productCode, String content, String imageLink, Integer imageCnt, Integer likes, Integer views, String location, String category, String title, String thumbnail, boolean productStatus, Integer mcoin, Integer reqCnt, Date insertDate, Date updateDate, Long userCode) {

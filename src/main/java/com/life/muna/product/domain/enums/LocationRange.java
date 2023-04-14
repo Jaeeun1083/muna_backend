@@ -1,4 +1,4 @@
-package com.life.muna.product.domain;
+package com.life.muna.product.domain.enums;
 
 import com.life.muna.common.error.exception.BusinessException;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.life.muna.product.dto;
 
-import com.life.muna.product.domain.Category;
+import com.life.muna.product.domain.enums.Category;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

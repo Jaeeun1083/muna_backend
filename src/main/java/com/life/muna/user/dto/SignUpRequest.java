@@ -2,9 +2,9 @@ package com.life.muna.user.dto;
 
 import com.life.muna.auth.util.PasswordEncoder;
 import com.life.muna.common.util.EnumValue;
-import com.life.muna.user.domain.LoginType;
+import com.life.muna.user.domain.enums.LoginType;
 import com.life.muna.user.domain.User;
-import com.life.muna.user.domain.UserLevel;
+import com.life.muna.user.domain.enums.UserLevel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
@@ -21,8 +21,8 @@ public class SignUpRequest {
 
     @ApiModelProperty(example = "test1234", required = true)
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "^(?=.*[a-zA-Z])((?=.*\\d)|(?=.*\\W)).{8,20}",
-            message = "비밀번호는 영문과 숫자 조합으로 8자 ~ 20자의 비밀번호여야 합니다.")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\\\\$%^&*]).{8,20}$",
+            message = "비밀번호는 영문과 숫자또는 특수문자 조합으로 8자 ~ 20자의 비밀번호여야 합니다.")
     private String password;
 
     @ApiModelProperty(example = "마루도키", required = true)

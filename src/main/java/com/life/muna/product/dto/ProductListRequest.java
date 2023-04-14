@@ -1,8 +1,8 @@
 package com.life.muna.product.dto;
 
 import com.life.muna.common.util.EnumValue;
-import com.life.muna.product.domain.Category;
-import com.life.muna.product.domain.LocationRange;
+import com.life.muna.product.domain.enums.Category;
+import com.life.muna.product.domain.enums.LocationRange;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,5 +47,4 @@ public class ProductListRequest {
     @ApiModelProperty(example = "true", required = true)
     @NotNull(message = "상품 판매 여부는 필수입니다.")
     private Boolean productStatus;
-
 }
