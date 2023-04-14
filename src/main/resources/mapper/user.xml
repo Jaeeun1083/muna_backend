@@ -4,12 +4,21 @@
 
 <mapper namespace="com.life.muna.user.mapper.UserMapper">
 
+    <select id="existsByNickName" parameterType="java.lang.String" resultType="boolean">
+        SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_USER WHERE NICKNAME=#{nickname} LIMIT 1), 0)
+    </select>
+
     <select id="existsByEmail" parameterType="java.lang.String" resultType="boolean">
-        SELECT COALESCE ((SELECT 1 FROM TB_USER WHERE EMAIL=#{email}), 0)
+        SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_USER WHERE EMAIL=#{email} LIMIT 1), 0)
     </select>
 
     <select id="findUserByEmail" parameterType="java.lang.String" resultType="com.life.muna.user.domain.User">
         SELECT USER_CODE, EMAIL, PASSWORD, NICKNAME, LOGIN_TYPE, USER_LEVEL,  PROFILE_IMAGE, FIREBASE_TOKEN, PHONE, LOCATION_DONG_CD, INSERT_DATE, UPDATE_DATE
+        FROM TB_USER WHERE EMAIL = #{email};
+    </select>
+
+    <select id="findUserCodeByEmail" resultType="Long">
+        SELECT USER_CODE
         FROM TB_USER WHERE EMAIL = #{email};
     </select>
 
@@ -23,9 +32,9 @@
         FROM TB_USER WHERE USER_CODE = #{userCode};
     </select>
 
-    <insert id="signUp" parameterType="com.life.muna.user.domain.User">
-        INSERT INTO TB_USER (EMAIL, PASSWORD, NICKNAME, LOGIN_TYPE, PROFILE_IMAGE, PHONE, INSERT_DATE)
-        VALUES ( #{email}, #{password}, #{nickname}, #{loginType}, #{profileImage}, #{phone}, now());
+    <insert id="save"  parameterType="com.life.muna.user.domain.User">
+        INSERT INTO TB_USER (EMAIL, PASSWORD, NICKNAME, LOGIN_TYPE, USER_LEVEL, PROFILE_IMAGE, PHONE, INSERT_DATE)
+        VALUES ( #{email}, #{password}, #{nickname}, #{loginType}, #{userLevel}, #{profileImage}, #{phone}, now());
     </insert>
 
 </mapper>

@@ -5,10 +5,7 @@ import com.life.muna.auth.dto.UnLock;
 import com.life.muna.auth.repository.RefreshTokenRepository;
 import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.common.dto.CommonResponse;
-import com.life.muna.user.dto.ReissueRequest;
-import com.life.muna.user.dto.SignInRequest;
-import com.life.muna.user.dto.SignOutRequest;
-import com.life.muna.user.dto.SignUpRequest;
+import com.life.muna.user.dto.*;
 import com.life.muna.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -70,7 +67,7 @@ public class UserController {
         data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
+                        .statusCode(HttpStatus.OK)
                         .data(data)
                         .message(signUpRequest.getEmail() + "의 회원 가입 결과").build());
     }
@@ -101,7 +98,7 @@ public class UserController {
         LOG.info("signIn email: " + signInRequest.getEmail());
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
+                        .statusCode(HttpStatus.OK)
                         .data(userService.signIn(signInRequest))
                         .message("로그인 결과").build());
     }
@@ -134,7 +131,7 @@ public class UserController {
         data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
+                        .statusCode(HttpStatus.OK)
                         .data(data)
                         .message("로그아웃 결과").build());
     }
@@ -166,7 +163,7 @@ public class UserController {
         LOG.info("reissueAccessToken refreshToken: " + reissueRequest.getRefreshToken());
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
+                        .statusCode(HttpStatus.OK)
                         .data(tokenProvider.createAccessToken(reissueRequest.getEmail(), new RefreshToken(reissueRequest.getRefreshToken())))
                         .message("access token 재발급 결과").build());
     }
@@ -194,9 +191,67 @@ public class UserController {
     public ResponseEntity<CommonResponse> getUserProfile(@PathVariable Long userCode) {
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
+                        .statusCode(HttpStatus.OK)
                         .data(userService.getUserProfile(userCode))
                         .message("유저 정보 조회 결과").build());
+    }
+
+    @ApiOperation(value = "이메일 중복 확인")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "result": true
+                                      },
+                                      "message": "이메일 중복이 아닙니다."
+                                    }""")))
+    @PostMapping("/email-duplicate")
+    public ResponseEntity<CommonResponse> isDuplicatedEmail(@RequestBody DuplicateEmailRequest duplicateEmailRequest) {
+        LOG.info("isDuplicatedEmail email: " + duplicateEmailRequest.getEmail());
+        Map<String, Boolean> data = new HashMap<String, Boolean>();
+        boolean result = userService.isDuplicated("email", duplicateEmailRequest.getEmail());
+        data.put("result", result);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK)
+                        .data(data)
+                        .message(result ? "이메일 중복입니다." : "이메일 중복이 아닙니다.") .build());
+    }
+
+    @ApiOperation(value = "닉네임 중복 확인")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "result": true
+                                      },
+                                      "message": "닉네임 중복 확인"
+                                    }""")))
+    @PostMapping("/nickname-duplicate")
+    public ResponseEntity<CommonResponse> isDuplicatedNickname(@RequestBody DuplicateNicknameRequest duplicateNicknameRequest) {
+        LOG.info("isDuplicatedNickname nickname: " + duplicateNicknameRequest.getNickname());
+        Map<String, Boolean> data = new HashMap<String, Boolean>();
+        boolean result = userService.isDuplicated("nickname", duplicateNicknameRequest.getNickname());
+        data.put("result", result);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK)
+                        .data(data)
+                        .message(result ? "닉네임 중복입니다." : "닉네임 중복이 아닙니다.") .build());
     }
 
 }

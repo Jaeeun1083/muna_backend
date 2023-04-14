@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -43,10 +42,17 @@ public class UserService {
             signUpRequest.setProfileImage(createDefaultImage());
         }
         User user = signUpRequest.toEntity(signUpRequest, passwordEncoder);
-        int signUpResult = userMapper.signUp(user);
+        int signUpResult = userMapper.save(user);
         return signUpResult == 1;
     }
 
+    public boolean isDuplicated(String field, String data) {
+        return switch (field) {
+            case "email" -> userMapper.existsByEmail(data);
+            case "nickname" -> userMapper.existsByNickName(data);
+            default -> throw new BusinessException(ErrorCode.INVALID_PARAMETER);
+        };
+    }
     public SignInResponse signIn(SignInRequest signInRequest) {
         Optional<User>  userOptional = userMapper.findUserByEmail(signInRequest.getEmail());
         if (userOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_USER);
