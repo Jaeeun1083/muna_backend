@@ -70,6 +70,24 @@ public class ProductService {
         return productDetailResponse.setRequested(isRequested);
     }
 
+    public Boolean requestShareProduct(String emailFromToken, ProductShareRequest productShareRequest) {
+        validateEmailFromTokenAndUserCode(emailFromToken, productShareRequest.getUserCode());
+        Long productCode = productShareRequest.getProductCode();
+
+        Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
+        if(findProductOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
+        Product findProduct = findProductOptional.get();
+
+        if (!findProduct.getProductStatus()) throw new BusinessException(ErrorCode.DISABLED_PRODUCT_REQUEST);
+        boolean isRequested = reqProductMapper.existsByUserCodeAndProductCode(productShareRequest.getUserCode(), productCode);
+        if (isRequested) throw new BusinessException(ErrorCode.ALREADY_PRODUCT_REQUEST);
+
+        //TODO 신청 가능한 횟수 조회 후 필요에 따라 exception
+
+        int requestChatResult = reqProductMapper.save(productShareRequest);
+        return requestChatResult == 1;
+    }
+
     private Long subStringValue(int beginIndex, int endIndex, Long value) {
         String strValue = Long.toString(value);
         return Long.parseLong(strValue.substring(beginIndex, endIndex));
