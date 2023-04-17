@@ -24,6 +24,7 @@ public class AppConfig implements WebMvcConfigurer {
         return new String[]{
                 "/api/muna/v1/users/signUp", "/api/muna/v1/users/signIn"
                 , "/api/muna/v1/users/signOut", "/api/muna/v1/users/reissue"
+                , "/api/muna/v1/users/email-duplicate", "/api/muna/v1/users/nickname-duplicate"
         };
     }
 
