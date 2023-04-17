@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.util.Date;
 
+import static com.life.muna.common.util.TimeConverter.convert;
+
 @Getter
 @Setter
 public class ProductListResponse {
@@ -18,8 +20,8 @@ public class ProductListResponse {
     private boolean productStatus;
     private Integer mcoin;
     private Integer reqCnt;
-    private Date insertDate;
-    private Date updateDate;
+    private String insertDate;
+    private String updateDate;
 
     @Builder
     public ProductListResponse(Long productCode, String location, Category category, String title, byte[] thumbnail, boolean productStatus, Integer mcoin, Integer reqCnt, Date insertDate, Date updateDate) {
@@ -31,8 +33,8 @@ public class ProductListResponse {
         this.productStatus = productStatus;
         this.mcoin = mcoin;
         this.reqCnt = reqCnt;
-        this.insertDate = insertDate;
-        this.updateDate = updateDate;
+        this.insertDate = convert(insertDate);
+        this.updateDate = convert(updateDate);
     }
 
 }

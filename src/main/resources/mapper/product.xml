@@ -4,7 +4,7 @@
 
 <mapper namespace="com.life.muna.product.mapper.ProductMapper">
     <select id="findProductList" parameterType="com.life.muna.product.dto.ProductListRequest" resultType="com.life.muna.product.dto.ProductListResponse">
-        SELECT p.PRODUCT_CODE, CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM),
+        SELECT p.PRODUCT_CODE, CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM, ' ', tl.LOCATION_DONG_SUB_NM),
         p.CATEGORY,  p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE
         FROM TB_PRODUCT p
         JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
@@ -21,7 +21,7 @@
         <if test="searchKeyword != null">
             AND p.TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
         </if>
-        <if test="productStatus != null">
+        <if test="productStatus == true">
             AND p.PRODUCT_STATUS = #{productStatus}
         </if>
         <if test="mcoinSort == true">
@@ -31,6 +31,12 @@
             ORDER BY p.MCOIN DESC
         </if>
         LIMIT #{productDataCnt}
+    </select>
+
+    <select id="findProductByProductCode" parameterType="Long" resultType="com.life.muna.product.domain.Product">
+        SELECT PRODUCT_CODE, USER_CODE, LOCATION_DONG_CD, CATEGORY, TITLE, THUMBNAIL, PRODUCT_STATUS, MCOIN, REQ_CNT, INSERT_DATE, UPDATE_DATE
+        FROM TB_PRODUCT
+        WHERE PRODUCT_CODE = #{productCode}
     </select>
 
     <select id="findProductDetailByProductCode" parameterType="Long" resultType="com.life.muna.product.dto.ProductDetailResponse">

@@ -8,6 +8,8 @@ import lombok.Getter;
 
 import java.util.Date;
 
+import static com.life.muna.common.util.TimeConverter.convert;
+
 @Getter
 public class ProductDetailResponse {
     private Long productCode;
@@ -23,8 +25,8 @@ public class ProductDetailResponse {
     private Boolean productStatus;
     private Integer mcoin;
     private Integer reqCnt;
-    private Date insertDate;
-    private Date updateDate;
+    private String insertDate;
+    private String updateDate;
     @JsonIgnore
     private Long userCode;
     private String userNickname;
@@ -47,8 +49,8 @@ public class ProductDetailResponse {
         this.productStatus = productStatus;
         this.mcoin = mcoin;
         this.reqCnt = reqCnt;
-        this.insertDate = insertDate;
-        this.updateDate = updateDate;
+        this.insertDate = convert(insertDate);
+        this.updateDate = convert(insertDate);
         this.userCode = userCode;
     }
 

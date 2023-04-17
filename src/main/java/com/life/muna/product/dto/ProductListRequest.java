@@ -24,11 +24,8 @@ public class ProductListRequest {
     @NotNull(message = "가져올 상품 개수는 필수 입력 값 입니다.")
     private Integer productDataCnt;
 
-    @ApiModelProperty(example = "서울특별시 은평구 신사1동")
-    private String location;
-
     @ApiModelProperty(hidden = true)
-    private Integer locationCode;
+    private Long locationCode;
 
     @ApiModelProperty(example = "L000", required = true)
     @EnumValue(enumClass = LocationRange.class, message = "위치 범위 코드가 올바르지 않습니다")
@@ -41,7 +38,7 @@ public class ProductListRequest {
     @EnumValue(enumClass = Category.class, message = "카테고리 코드가 올바르지 않습니다")
     private String category;
 
-    @ApiModelProperty(example = "상품1")
+    @ApiModelProperty(example = "1")
     private String searchKeyword;
 
     @ApiModelProperty(example = "true", required = true)
