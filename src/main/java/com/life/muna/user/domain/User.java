@@ -18,12 +18,12 @@ public class User {
     private byte[] profileImage;
     private String firebaseToken;
     private String phone;
-    private Integer locationDongCd;
+    private Long locationDongCd;
     private Date insertDate;
     private Date updateDate;
 
     @Builder
-    public User(Long userCode, String email, String password, String nickname, LoginType loginType, UserLevel userLevel, byte[] profileImage, String firebaseToken, String phone, Integer locationDongCd, Date insertDate, Date updateDate) {
+    public User(Long userCode, String email, String password, String nickname, LoginType loginType, UserLevel userLevel, byte[] profileImage, String firebaseToken, String phone, Long locationDongCd, Date insertDate, Date updateDate) {
         this.userCode = userCode;
         this.email = email;
         this.password = password;

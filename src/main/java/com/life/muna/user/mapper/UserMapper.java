@@ -16,5 +16,6 @@ public interface UserMapper {
     Long findUserCodeByEmail(@Param("email") String email);
     Optional<User> findUserByUserCode(@Param("userCode") Long userCode);
     String findEmailByUserCode(@Param("userCode") Long userCode);
+    int saveLocation(@Param("userCode") Long userCode, @Param("locationDongCd") Long locationDongCd);
     int save(User user);
 }

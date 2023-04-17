@@ -9,4 +9,7 @@ import java.util.Optional;
 @Mapper
 public interface LocationMapper {
     Optional<Location> findByLocationNm(@Param("locationSiNm") String locationSiNm, @Param("locationGuNm") String locationGuNm, @Param("locationDongNm") String locationDongNm);
+    Optional<Location> findByLocationNmWithSub(@Param("locationSiNm") String locationSiNm, @Param("locationGuNm") String locationGuNm, @Param("locationDongNm") String locationDongNm,  @Param("locationDongSubNm") String locationDongSubNm);
+    Location findByLocationDongCd(@Param("locationDongCd") Long locationDongCd);
+    int countByLocationGuNm(@Param("locationGuNm") String locationGuNm);
 }
