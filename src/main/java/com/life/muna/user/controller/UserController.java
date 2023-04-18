@@ -171,8 +171,11 @@ public class UserController {
                         .message("access token 재발급 결과").build());
     }
 
+    /**
+     * 유저 정보 조회 API
+     * */
     @ApiOperation(value = "유저 정보 조회")
-    @GetMapping("/{userCode}")
+    @GetMapping("/me")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -191,14 +194,18 @@ public class UserController {
                                           },
                                           "message": "유저 정보 조회 성공"
                                         }""")))
-    public ResponseEntity<CommonResponse> getUserProfile(@PathVariable Long userCode) {
+    public ResponseEntity<CommonResponse> getUserProfile(HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(userService.getUserProfile(userCode))
+                        .data(userService.getUserProfile(email))
                         .message("유저 정보 조회 성공").build());
     }
 
+    /**
+     * 사용자 위치 업데이트 API
+     * */
     @ApiOperation(value= "사용자 위치 업데이트")
     @PutMapping("/location")
     @ApiResponse(
@@ -227,6 +234,9 @@ public class UserController {
                         .message("사용자 위치 업데이트 성공").build());
     }
 
+    /**
+     * 이메일 중복 체크 API
+     * */
     @ApiOperation(value = "이메일 중복 체크")
     @ApiResponse(
             responseCode = "200",
@@ -243,11 +253,11 @@ public class UserController {
                                       },
                                       "message": "이메일 중복이 아닙니다."
                                     }""")))
-    @PostMapping("/email-duplicate")
-    public ResponseEntity<CommonResponse> isDuplicatedEmail(@RequestBody DuplicateEmailRequest duplicateEmailRequest) {
-        LOG.info("isDuplicatedEmail email: " + duplicateEmailRequest.getEmail());
+    @GetMapping("/duplicate/email")
+    public ResponseEntity<CommonResponse> isDuplicatedEmail(@RequestParam String email) {
+        LOG.info("isDuplicatedEmail email: " + email);
         Map<String, Boolean> data = new HashMap<String, Boolean>();
-        boolean result = userService.isDuplicated("email", duplicateEmailRequest.getEmail());
+        boolean result = userService.isDuplicated("email", email);
         data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
@@ -256,6 +266,9 @@ public class UserController {
                         .message(result ? "이메일 중복입니다." : "이메일 중복이 아닙니다.") .build());
     }
 
+    /**
+     * 닉네임 중복 체크 API
+     * */
     @ApiOperation(value = "닉네임 중복 체크")
     @ApiResponse(
             responseCode = "200",
@@ -272,11 +285,11 @@ public class UserController {
                                       },
                                       "message": "닉네임 중복이 아닙니다."
                                     }""")))
-    @PostMapping("/nickname-duplicate")
-    public ResponseEntity<CommonResponse> isDuplicatedNickname(@RequestBody DuplicateNicknameRequest duplicateNicknameRequest) {
-        LOG.info("isDuplicatedNickname nickname: " + duplicateNicknameRequest.getNickname());
+    @GetMapping("/duplicate/nickname")
+    public ResponseEntity<CommonResponse> isDuplicatedNickname(@RequestParam String nickname) {
+        LOG.info("isDuplicatedNickname nickname: " + nickname);
         Map<String, Boolean> data = new HashMap<String, Boolean>();
-        boolean result = userService.isDuplicated("nickname", duplicateNicknameRequest.getNickname());
+        boolean result = userService.isDuplicated("nickname", nickname);
         data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()

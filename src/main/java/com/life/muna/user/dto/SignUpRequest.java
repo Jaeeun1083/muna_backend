@@ -8,7 +8,6 @@ import com.life.muna.user.domain.enums.UserLevel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -16,10 +15,11 @@ import javax.validation.constraints.Pattern;
 public class SignUpRequest {
     @ApiModelProperty(example = "muna@munaApp.com", required = true)
     @NotBlank(message = "이메일은 필수 입력 값 입니다.")
-    @Email(message = "이메일 형식이 올바르지 않습니다.")
+    @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
+            message = "이메일 형식이 올바르지 않습니다.")
     private String email;
 
-    @ApiModelProperty(example = "test1234", required = true)
+    @ApiModelProperty(example = "test1234!", required = true)
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\\\\$%^&*]).{8,20}$",
             message = "비밀번호는 영문과 숫자또는 특수문자 조합으로 8자 ~ 20자의 비밀번호여야 합니다.")

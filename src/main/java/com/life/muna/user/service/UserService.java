@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -27,6 +29,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final String defaultImage;
+    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final String NICKNAME_PATTERN = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*$";
 
     public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, @Value("${image.path}") String imagePath) {
         this.userMapper = userMapper;
@@ -36,11 +40,15 @@ public class UserService {
     }
 
     public Boolean signUp(SignUpRequest signUpRequest) {
-        boolean isExistsUser = userMapper.existsByEmail(signUpRequest.getEmail());
-        if (isExistsUser) throw new BusinessException(ErrorCode.ALREADY_EXISTS_USER);
+        boolean isExistsEmail = isDuplicated("email", signUpRequest.getEmail());
+        if (isExistsEmail) throw new BusinessException(ErrorCode.ALREADY_EXISTS_USER);
+        boolean isExistsNickname = isDuplicated("nickname", signUpRequest.getNickname());
+        if (isExistsNickname) throw new BusinessException(ErrorCode.ALREADY_EXISTS_NICKNAME);
+
         if (signUpRequest.getProfileImage() == null || signUpRequest.getProfileImage().length == 0) {
             signUpRequest.setProfileImage(createDefaultImage());
         }
+
         User user = signUpRequest.toEntity(signUpRequest, passwordEncoder);
         int signUpResult = userMapper.save(user);
         return signUpResult == 1;
@@ -54,8 +62,8 @@ public class UserService {
         return new SignInResponse(user.getUserCode(), jwtTokenProvider.createToken(user.getEmail()));
     }
 
-    public UserProfileResponse getUserProfile(Long userCode) {
-        Optional<User> userOptional = userMapper.findUserByUserCode(userCode);
+    public UserProfileResponse getUserProfile(String emailFromToken) {
+        Optional<User> userOptional = userMapper.findUserByEmail(emailFromToken);
         if (userOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_USER);
         User user = userOptional.get();
         return UserProfileResponse.builder()
@@ -69,8 +77,18 @@ public class UserService {
 
     public boolean isDuplicated(String field, String data) {
         return switch (field) {
-            case "email" -> userMapper.existsByEmail(data);
-            case "nickname" -> userMapper.existsByNickName(data);
+            case "email" -> {
+                Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+                Matcher matcher = pattern.matcher(data);
+                if(!matcher.matches()) throw new BusinessException(ErrorCode.INVALID_EMAIL);
+                yield userMapper.existsByEmail(data);
+            }
+            case "nickname" -> {
+                Pattern pattern = Pattern.compile(NICKNAME_PATTERN);
+                Matcher matcher = pattern.matcher(data);
+                if(!matcher.matches()) throw new BusinessException(ErrorCode.INVALID_NICKNAME);
+                yield userMapper.existsByNickName(data);
+            }
             default -> throw new BusinessException(ErrorCode.INVALID_PARAMETER);
         };
     }
