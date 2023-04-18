@@ -21,6 +21,13 @@
           AND CHAT_STATUS = 'REQ'
     </select>
 
+    <select id="findChatReqCountByProductCode" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_PRODUCT_REQ
+        WHERE PRODUCT_CODE = #{productCode}
+          AND CHAT_STATUS = 'REQ'
+    </select>
+
     <select id="findProductCodeByUserCode" resultType="Long">
         SELECT PRODUCT_CODE
         FROM TB_PRODUCT_REQ

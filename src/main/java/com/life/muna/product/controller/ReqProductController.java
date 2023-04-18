@@ -155,11 +155,9 @@ public class ReqProductController {
                                         {
                                           "title": "타이틀1",
                                           "thumbnail": byte[],
-                                          "category": "C002",
+                                          "requestCount": 0,
                                           "mcoin": 1,
                                           "productStatus": true,
-                                          "insertDate": "2023.04.07 10:44:33",
-                                          "updateDate": "2023.04.17 12:04:31"
                                         },
                                       ]
                                       "message": "상품 나눔 요청 내역 조회 성공"

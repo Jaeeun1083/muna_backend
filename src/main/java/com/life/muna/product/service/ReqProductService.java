@@ -76,7 +76,8 @@ public class ReqProductService {
             if (findProductOptional.isEmpty()) {
 
             } else {
-                ReqProductListResponse response = ReqProductListResponse.of(findProductOptional.get());
+                int requestCount = reqProductMapper.findChatReqCountByProductCode(productCode);
+                ReqProductListResponse response = ReqProductListResponse.of(findProductOptional.get(), requestCount);
                 reqProductListResponses.add(response);
             }
         }
