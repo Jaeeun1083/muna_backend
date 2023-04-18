@@ -12,8 +12,7 @@ public class ProductShareRequest {
     @NotNull(message = "유저 코드는 필수 입력 값 입니다.")
     private Long userCode;
 
-    @ApiModelProperty(example = "1", required = true)
-    @NotNull(message = "상품 코드는 필수 입력 값 입니다.")
+    @ApiModelProperty(hidden = true)
     private Long productCode;
 
     @ApiModelProperty(example = "나눔 요청 부탁드립니다.", required = true)

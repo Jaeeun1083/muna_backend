@@ -14,6 +14,27 @@
         SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_PRODUCT_REQ WHERE USER_CODE=#{userCode} AND PRODUCT_CODE=#{productCode} LIMIT 1), 0)
     </select>
 
+    <select id="findChatReqCountByUserCode" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_PRODUCT_REQ
+        WHERE USER_CODE = #{userCode}
+          AND CHAT_STATUS = 'REQ'
+    </select>
+
+    <select id="findProductCodeByUserCode" resultType="Long">
+        SELECT PRODUCT_CODE
+        FROM TB_PRODUCT_REQ
+        WHERE USER_CODE = #{userCode}
+          AND PRODUCT_CODE &gt;= #{startProductCode}
+        LIMIT #{productDataCnt}
+    </select>
+
+    <delete id="deleteByUserCodeAndProductCode">
+        DELETE FROM TB_PRODUCT_REQ
+        WHERE USER_CODE = #{userCode}
+          AND PRODUCT_CODE = #{productCode}
+    </delete>
+
     <insert id="save"  parameterType="com.life.muna.product.domain.ReqProduct">
         INSERT INTO TB_PRODUCT_REQ (PRODUCT_CODE, USER_CODE, REQ_CONTENT, INSERT_DATE, UPDATE_DATE)
         VALUES ( #{productCode}, #{userCode}, #{requestContent}, now(), now());
