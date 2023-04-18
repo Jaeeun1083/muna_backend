@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface UserMapper {
     boolean existsByNickName(@Param("nickname") String nickname);
-    boolean existsByEmail(@Param("userEmail") String userEmail);
-    Optional<User>  findUserByEmail(@Param("userEmail") String userEmail);
+    boolean existsByEmail(@Param("email") String userEmail);
+    Optional<User> findUserByEmail(@Param("email") String userEmail);
     Long findUserCodeByEmail(@Param("email") String email);
     Optional<User> findUserByUserCode(@Param("userCode") Long userCode);
     String findEmailByUserCode(@Param("userCode") Long userCode);
