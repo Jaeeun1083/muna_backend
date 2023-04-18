@@ -4,7 +4,9 @@ import com.life.muna.auth.dto.AccessToken;
 import com.life.muna.auth.dto.RefreshToken;
 import com.life.muna.auth.dto.TokenResponse;
 import com.life.muna.auth.repository.RefreshTokenRepository;
+import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
+import com.life.muna.user.mapper.UserMapper;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,17 +25,19 @@ public class JwtTokenProvider {
     private final long accessTokenValidityTime;
     private final long refreshTokenValidityTime;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserMapper userMapper;
 
     public JwtTokenProvider(
             @Value("${jwt.token.secret-key}") String secretKey
             , @Value("${jwt.access-token-validity-time}") long accessTokenValidityTime
             , @Value("${jwt.refresh-token-validity-time}") long refreshTokenValidityTime
-            , final RefreshTokenRepository refreshTokenRepository
-    ) {
+            , final RefreshTokenRepository refreshTokenRepository,
+            UserMapper userMapper) {
         this.secretKey =  new SecretKeySpec(Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS256.getJcaName());
         this.accessTokenValidityTime = accessTokenValidityTime * 1000; // 3600초
         this.refreshTokenValidityTime = refreshTokenValidityTime * 1000;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.userMapper = userMapper;
     }
 
     public TokenResponse createToken(String email) {
@@ -80,6 +84,12 @@ public class JwtTokenProvider {
             e.printStackTrace();
             throw new BusinessException(INVALID_AUTH_TOKEN);
         }
+    }
+
+    public void validateEmailFromTokenAndUserCode(String emailFromToken, Long userCode) {
+        Long findUserCode = userMapper.findUserCodeByEmail(emailFromToken);
+        if (findUserCode == null) throw new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE);
+        if (!findUserCode.equals(userCode)) throw new BusinessException(ErrorCode.MISMATCH_TOKEN_USER_CODE);
     }
 
 }

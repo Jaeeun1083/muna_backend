@@ -1,6 +1,11 @@
 package com.life.muna.product.domain.enums;
 
+import com.life.muna.common.error.exception.BusinessException;
 import lombok.Getter;
+
+import java.util.Arrays;
+
+import static com.life.muna.common.error.ErrorCode.INVALID_LOCATION_RANGE_CODE;
 
 @Getter
 public enum Category {
@@ -25,6 +30,14 @@ public enum Category {
         this.data = data;
         this.code = code;
     }
+
+    public static Category fromCode(String code) {
+        return Arrays.stream(values())
+                .filter(g -> g.getCode().equals(code))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(INVALID_LOCATION_RANGE_CODE));
+    }
+
 
     @Override
     public String toString() {

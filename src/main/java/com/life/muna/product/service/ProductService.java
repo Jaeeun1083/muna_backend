@@ -1,10 +1,12 @@
 package com.life.muna.product.service;
 
+import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.location.domain.Location;
 import com.life.muna.location.mapper.LocationMapper;
 import com.life.muna.product.domain.Product;
+import com.life.muna.product.domain.ProductDetail;
 import com.life.muna.product.domain.enums.LocationRange;
 import com.life.muna.product.dto.*;
 import com.life.muna.product.mapper.ProductMapper;
@@ -13,6 +15,7 @@ import com.life.muna.user.domain.User;
 import com.life.muna.user.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,16 +29,18 @@ public class ProductService {
     private UserMapper userMapper;
     private ReqProductMapper reqProductMapper;
     private LocationMapper locationMapper;
+    private JwtTokenProvider jwtTokenProvider;
 
-    public ProductService(ProductMapper productMapper, UserMapper userMapper, ReqProductMapper reqProductMapper, LocationMapper locationMapper) {
+    public ProductService(ProductMapper productMapper, UserMapper userMapper, ReqProductMapper reqProductMapper, LocationMapper locationMapper, JwtTokenProvider jwtTokenProvider) {
         this.productMapper = productMapper;
         this.userMapper = userMapper;
         this.reqProductMapper = reqProductMapper;
         this.locationMapper = locationMapper;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public List<ProductListResponse> getProductList(String emailFromToken, ProductListRequest productListRequest) {
-        validateEmailFromTokenAndUserCode(emailFromToken, productListRequest.getUserCode());
+        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, productListRequest.getUserCode());
         User user = userMapper.findUserByUserCode(productListRequest.getUserCode()).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE));
         if(user.getLocationDongCd() == null) throw new BusinessException(ErrorCode.UNPROCESSABLE_USER_LOCATION);
         Location location = locationMapper.findByLocationDongCd(user.getLocationDongCd());
@@ -53,9 +58,8 @@ public class ProductService {
         return productList;
     }
 
-    public ProductDetailResponse getProduct(ProductDetailRequest productDetailRequest) {
-        Long userCode = productDetailRequest.getUserCode();
-        Long productCode = productDetailRequest.getProductCode();
+    public ProductDetailResponse getProduct(String emailFromToken, Long productCode) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
 
         Optional<ProductDetailResponse> productDetailOptional = productMapper.findProductDetailByProductCode(productCode);
         if (productDetailOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
@@ -70,33 +74,9 @@ public class ProductService {
         return productDetailResponse.setRequested(isRequested);
     }
 
-    public Boolean requestShareProduct(String emailFromToken, ProductShareRequest productShareRequest) {
-        validateEmailFromTokenAndUserCode(emailFromToken, productShareRequest.getUserCode());
-        Long productCode = productShareRequest.getProductCode();
-
-        Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
-        if(findProductOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
-        Product findProduct = findProductOptional.get();
-
-        if (!findProduct.getProductStatus()) throw new BusinessException(ErrorCode.DISABLED_PRODUCT_REQUEST);
-        boolean isRequested = reqProductMapper.existsByUserCodeAndProductCode(productShareRequest.getUserCode(), productCode);
-        if (isRequested) throw new BusinessException(ErrorCode.ALREADY_PRODUCT_REQUEST);
-
-        //TODO 신청 가능한 횟수 조회 후 필요에 따라 exception
-
-        int requestChatResult = reqProductMapper.save(productShareRequest);
-        return requestChatResult == 1;
-    }
-
     private Long subStringValue(int beginIndex, int endIndex, Long value) {
         String strValue = Long.toString(value);
         return Long.parseLong(strValue.substring(beginIndex, endIndex));
-    }
-
-    private void validateEmailFromTokenAndUserCode(String emailFromToken, Long userCode) {
-        Long findUserCode = userMapper.findUserCodeByEmail(emailFromToken);
-        if (findUserCode == null) throw new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE);
-        if (!findUserCode.equals(userCode)) throw new BusinessException(ErrorCode.MISMATCH_TOKEN_USER_CODE);
     }
 
 }

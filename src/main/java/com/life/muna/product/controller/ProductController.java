@@ -1,9 +1,7 @@
 package com.life.muna.product.controller;
 
 import com.life.muna.common.dto.CommonResponse;
-import com.life.muna.product.dto.ProductDetailRequest;
 import com.life.muna.product.dto.ProductListRequest;
-import com.life.muna.product.dto.ProductShareRequest;
 import com.life.muna.product.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @Api(tags = "상품 API 정보 제공")
 @RequiredArgsConstructor
@@ -31,8 +27,11 @@ public class ProductController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final ProductService productService;
 
+    /**
+     * 상품 목록 조회 API
+     * */
     @ApiOperation(value = "상품 목록 조회")
-    @PostMapping("")
+    @PostMapping("/list")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -62,6 +61,7 @@ public class ProductController {
                                     }""")))
     public ResponseEntity<CommonResponse> getProductList(@RequestBody @Valid ProductListRequest productListRequest, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
+
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
@@ -69,8 +69,11 @@ public class ProductController {
                         .message("상품 목록 조회 성공").build());
     }
 
+    /**
+     * 상품 상세 조회 API
+     * */
     @ApiOperation(value = "상품 상세 조회")
-    @PostMapping("/detail")
+    @GetMapping("/detail")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -105,47 +108,13 @@ public class ProductController {
                                       }
                                       "message": "상품 상세 조회 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getProduct(@RequestBody @Valid ProductDetailRequest productDetailRequest) {
-        return ResponseEntity.ok()
-                .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
-                        .data(productService.getProduct(productDetailRequest))
-                        .message("상품 상세 조회 성공").build());
-    }
-
-    @PostMapping("/detail/request")
-    @ApiResponse(
-            responseCode = "200",
-            description = "Successful operation",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = CommonResponse.class),
-                    examples = @ExampleObject(
-                            name = "example",
-                            value = """
-                                    {
-                                      "statusCode": 200,
-                                      "data": {
-                                        "result": true
-                                      }
-                                      "message": "상품 나눔 요청"
-                                    }""")))
-    public ResponseEntity<CommonResponse> requestShareProduct(@RequestBody @Valid ProductShareRequest productShareRequest, HttpServletRequest request) {
-        LOG.info("requestShareProduct productCode: " + productShareRequest.getProductCode());
-        LOG.info("requestShareProduct productCode: " + productShareRequest.getProductCode());
-        LOG.info("requestShareProduct userCode: " + productShareRequest.getUserCode());
-        LOG.info("requestShareProduct requestContent: " + productShareRequest.getRequestContent());
-
+    public ResponseEntity<CommonResponse> getProduct(@RequestParam Long productCode, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
-
-        Map<String, Boolean> data = new HashMap<String, Boolean>();
-        Boolean result = productService.requestShareProduct(email, productShareRequest);
-        data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(data)
-                        .message("상품 나눔 요청 " + (result ? "성공" : "실패")).build());
+                        .data(productService.getProduct(email, productCode))
+                        .message("상품 상세 조회 성공").build());
     }
 
 }
