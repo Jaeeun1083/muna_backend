@@ -3,10 +3,9 @@ package com.life.muna.product.service;
 import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
+import com.life.muna.like.mapper.ProductLikeMapper;
 import com.life.muna.location.domain.Location;
 import com.life.muna.location.mapper.LocationMapper;
-import com.life.muna.product.domain.Product;
-import com.life.muna.product.domain.ProductDetail;
 import com.life.muna.product.domain.enums.LocationRange;
 import com.life.muna.product.dto.*;
 import com.life.muna.product.mapper.ProductMapper;
@@ -15,7 +14,6 @@ import com.life.muna.user.domain.User;
 import com.life.muna.user.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,15 +24,17 @@ public class ProductService {
     private final Logger LOG = LoggerFactory.getLogger(ProductService.class);
 
     private ProductMapper productMapper;
-    private UserMapper userMapper;
     private ReqProductMapper reqProductMapper;
+    private ProductLikeMapper productLikeMapper;
+    private UserMapper userMapper;
     private LocationMapper locationMapper;
     private JwtTokenProvider jwtTokenProvider;
 
-    public ProductService(ProductMapper productMapper, UserMapper userMapper, ReqProductMapper reqProductMapper, LocationMapper locationMapper, JwtTokenProvider jwtTokenProvider) {
+    public ProductService(ProductMapper productMapper, ReqProductMapper reqProductMapper, ProductLikeMapper productLikeMapper, UserMapper userMapper, LocationMapper locationMapper, JwtTokenProvider jwtTokenProvider) {
         this.productMapper = productMapper;
-        this.userMapper = userMapper;
         this.reqProductMapper = reqProductMapper;
+        this.productLikeMapper = productLikeMapper;
+        this.userMapper = userMapper;
         this.locationMapper = locationMapper;
         this.jwtTokenProvider = jwtTokenProvider;
     }
@@ -71,7 +71,8 @@ public class ProductService {
 
         //TODO 회원당 조회수 중복 X -> 조회수 테이블 필요. 무조건 조회수 늘어남 -> product detail 테이블의 like +1
         boolean isRequested = reqProductMapper.existsByUserCodeAndProductCode(userCode, productCode);
-        return productDetailResponse.setRequested(isRequested);
+        boolean isLiked = productLikeMapper.existsByUserCodeAndProductCode(userCode, productCode);
+        return productDetailResponse.setMyInformation(isRequested, isLiked);
     }
 
     private Long subStringValue(int beginIndex, int endIndex, Long value) {
