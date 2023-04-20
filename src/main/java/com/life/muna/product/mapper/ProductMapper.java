@@ -16,6 +16,7 @@ public interface ProductMapper {
     List<ProductListResponse> findProductList(ProductListRequest productListRequest);
     Optional<Product> findProductByProductCode(@Param("productCode") Long productCode);
     Optional<ProductDetailResponse> findProductDetailByProductCode(@Param("productCode") Long productCode);
+    int updateReqCnt(@Param("productCode") Long productCode, @Param("reqCnt") int reqCnt);
     int saveProductDetail(ProductDetail productDetail);
     int save(Product product);
 }
