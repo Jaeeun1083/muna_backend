@@ -13,7 +13,7 @@ public interface ReqProductMapper {
     boolean existsByUserCodeAndProductCode(@Param("userCode") Long userCode, @Param("productCode")  Long productCode);
     int findChatReqCountByUserCode(@Param("userCode") Long userCode);
     int findChatReqCountByProductCode(@Param("productCode") Long productCode);
-    List<Long> findProductCodeByUserCode(@Param("userCode") Long userCode, @Param("startProductCode") int startProductCode, @Param("productDataCnt") int productDataCnt);
+    List<Long> findProductCodeByUserCode(@Param("userCode") Long userCode, @Param("offset") int offset, @Param("pageSize") int pageSize);
     int deleteByUserCodeAndProductCode(@Param("userCode") Long userCode, @Param("productCode") Long productCode);
     int save (ProductShareRequest productShareRequest);
 }

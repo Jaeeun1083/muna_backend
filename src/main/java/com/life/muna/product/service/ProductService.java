@@ -22,7 +22,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final Logger LOG = LoggerFactory.getLogger(ProductService.class);
-    private final static Integer PAGE_SIZE = 30;
+    private final static int PAGE_SIZE = 30;
 
     private ProductMapper productMapper;
     private ReqProductMapper reqProductMapper;

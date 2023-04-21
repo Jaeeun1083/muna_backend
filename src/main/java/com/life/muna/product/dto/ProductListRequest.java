@@ -1,5 +1,6 @@
 package com.life.muna.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.life.muna.common.util.EnumValue;
 import com.life.muna.product.domain.enums.Category;
 import com.life.muna.product.domain.enums.LocationRange;
@@ -7,24 +8,28 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class ProductListRequest {
-    @ApiModelProperty(example = "25", required = true)
-    @NotNull(message = "유저 코드는 필수 입력 값 입니다.")
-    private Long userCode;
+//    @ApiModelProperty(example = "25", required = true)
+//    @NotNull(message = "유저 코드는 필수 입력 값 입니다.")
+//    private Long userCode;
 
-    @ApiModelProperty(example = "0", required = true)
-    @NotNull(message = "상품 시작 코드는 필수 입력 값 입니다.")
-    private Long startProductCode;
+    @ApiModelProperty(example = "1", required = true)
+    @NotNull(message = "페이지 넘버는 필수 입력 값 입니다.")
+    @Min(value = 1, message = "페이지는 1 이상의 값이어야 합니다.")
+    private Integer page;
 
-    @ApiModelProperty(example = "30", required = true)
-    @NotNull(message = "가져올 상품 개수는 필수 입력 값 입니다.")
-    private Integer productDataCnt;
+    @JsonIgnore
+    private int pageSize;
 
-    @ApiModelProperty(hidden = true)
+    @JsonIgnore
+    private int offset;
+
+    @JsonIgnore
     private Long locationCode;
 
     @ApiModelProperty(example = "L000", required = true)
@@ -44,4 +49,11 @@ public class ProductListRequest {
     @ApiModelProperty(example = "true", required = true)
     @NotNull(message = "상품 판매 여부는 필수입니다.")
     private Boolean productStatus;
+
+    @ApiModelProperty(hidden = true)
+    public void setPageInfo(int pageSize) {
+        this.pageSize = pageSize;
+        this.offset = (this.page -1) * pageSize;
+    }
+
 }

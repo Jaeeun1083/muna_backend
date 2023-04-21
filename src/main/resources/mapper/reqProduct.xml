@@ -33,7 +33,7 @@
         FROM TB_PRODUCT_REQ
         WHERE USER_CODE = #{userCode}
           AND PRODUCT_CODE &gt;= #{startProductCode}
-        LIMIT #{productDataCnt}
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <delete id="deleteByUserCodeAndProductCode">

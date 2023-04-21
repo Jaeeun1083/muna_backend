@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -163,12 +164,12 @@ public class ReqProductController {
                                       ]
                                       "message": "상품 나눔 요청 내역 조회 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getProductReceived(@RequestParam Integer startProductCode, @RequestParam Integer productDataCnt, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> getProductReceived(@RequestParam @NotNull Integer page, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(reqProductService.getRequestProductList(email, startProductCode, productDataCnt))
+                        .data(reqProductService.getRequestProductList(email, page))
                         .message("상품 나눔 요청 내역 조회 성공").build());
     }
 
