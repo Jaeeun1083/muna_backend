@@ -73,7 +73,7 @@ public class ProductController {
      * 상품 상세 조회 API
      * */
     @ApiOperation(value = "상품 상세 조회")
-    @GetMapping("/detail")
+    @GetMapping("/{productCode}")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -109,7 +109,7 @@ public class ProductController {
                                       }
                                       "message": "상품 상세 조회 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getProduct(@RequestParam Long productCode, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> getProduct(@PathVariable Long productCode, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
