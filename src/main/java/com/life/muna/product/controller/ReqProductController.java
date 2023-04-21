@@ -141,7 +141,7 @@ public class ReqProductController {
      * 상품 나눔 요청 내역 조회 API
      * */
     @ApiOperation(value = "상품 나눔 요청 내역 조회")
-    @GetMapping("")
+    @GetMapping("/list")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
