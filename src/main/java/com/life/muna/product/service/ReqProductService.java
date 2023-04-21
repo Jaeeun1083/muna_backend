@@ -56,14 +56,25 @@ public class ReqProductService {
         int requested = reqProductMapper.findChatReqCountByUserCode(userCode);
         if (requested >= MAX_REQUEST) throw new BusinessException(ErrorCode.EXCEED_PRODUCT_REQUEST_COUNT);
         int requestChatResult = reqProductMapper.save(productShareRequest);
-        return requestChatResult == 1;
+        if (requestChatResult == 1) {
+            int updateReqCntResult = productMapper.updateReqCnt(findProduct.getProductCode(), findProduct.getReqCnt() + 1);
+            return updateReqCntResult == 1;
+        } else {
+            return false;
+        }
     }
 
-    public int withdrawRequestProduct(String emailFromToken, Long productCode) {
+    public boolean withdrawRequestProduct(String emailFromToken, Long productCode) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
         boolean isExists = reqProductMapper.existsByUserCodeAndProductCode(userCode, productCode);
         if(!isExists) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_REQ);
-        return reqProductMapper.deleteByUserCodeAndProductCode(userCode, productCode);
+        int requestChatResult = reqProductMapper.deleteByUserCodeAndProductCode(userCode, productCode);
+        Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
+        if(findProductOptional.isPresent()) {
+            Product product = findProductOptional.get();
+            productMapper.updateReqCnt(product.getProductCode(), product.getReqCnt() > 0 ? product.getReqCnt() - 1 : product.getReqCnt());
+        }
+        return requestChatResult != 0;
     }
 
     public List<ReqProductListResponse> getRequestProductList(String emailFromToken, int startProductCode, int productDataCnt) {

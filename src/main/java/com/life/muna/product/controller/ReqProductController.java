@@ -46,7 +46,7 @@ public class ReqProductController {
                                     {
                                       "statusCode": 200,
                                       "data": {
-                                        requested": 0
+                                        "result": 0
                                       }
                                       "message": "보유한 나눔 신청 횟수 조회 성공"
                                     }""")))
@@ -54,7 +54,7 @@ public class ReqProductController {
         String email = (String) request.getAttribute("email");
         Map<String, Integer> data = new HashMap<String, Integer>();
         Integer requested = reqProductService.getMyRequestCount(email);
-        data.put("requested", requested);
+        data.put("result", requested);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
@@ -126,7 +126,7 @@ public class ReqProductController {
         String email = (String) request.getAttribute("email");
 
         Map<String, Boolean> data = new HashMap<String, Boolean>();
-        boolean result = reqProductService.withdrawRequestProduct(email, productCode) != 0;
+        boolean result = reqProductService.withdrawRequestProduct(email, productCode);
         data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()

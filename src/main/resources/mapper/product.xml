@@ -24,11 +24,11 @@
         <if test="productStatus == true">
             AND p.PRODUCT_STATUS = #{productStatus}
         </if>
-        <if test="mcoinSort == true">
-            ORDER BY p.MCOIN ASC
+        <if test="mcoinSort != null">
+            ORDER BY p.UPDATE_DATE DESC, p.MCOIN ${mcoinSort ? 'ASC' : 'DESC'}
         </if>
-        <if test="mcoinSort == false">
-            ORDER BY p.MCOIN DESC
+        <if test="mcoinSort == null">
+            ORDER BY p.UPDATE_DATE DESC
         </if>
         LIMIT #{productDataCnt}
     </select>
@@ -48,6 +48,12 @@
                  JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
         WHERE p.PRODUCT_CODE = #{productCode}
     </select>
+
+    <update id="updateReqCnt">
+        UPDATE TB_PRODUCT
+        SET REQ_CNT = #{reqCnt}
+        WHERE PRODUCT_CODE = #{productCode}
+    </update>
 
     <insert id="saveProductDetail" parameterType="com.life.muna.product.domain.ProductDetail">
         INSERT INTO TB_PRODUCT_DETAIL (PRODUCT_CODE, USER_CODE, CONTENT, INSERT_DATE, UPDATE_DATE)

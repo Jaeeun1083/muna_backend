@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.life.muna.like.mapper.ProductLikeMapper">
+
+    <select id="existsByUserCodeAndProductCode" parameterType="Long" resultType="boolean">
+        SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_PRODUCT_LIKE WHERE USER_CODE=#{userCode} AND PRODUCT_CODE=#{productCode} LIMIT 1), 0)
+    </select>
+
+    <select id="findProductLikeByUserCode" parameterType="Long" resultType="com.life.muna.like.domain.ProductLike">
+        SELECT *
+        FROM TB_PRODUCT_LIKE
+        WHERE USER_CODE = #{userCode}
+    </select>
+
+    <select id="findProductLikeCountByProductCode" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM TB_PRODUCT_LIKE
+        WHERE PRODUCT_CODE = #{productCode}
+    </select>
+
+    <select id="findProductCodeByUserCode" resultType="Long">
+        SELECT PRODUCT_CODE
+        FROM TB_PRODUCT_LIKE
+        WHERE USER_CODE = #{userCode}
+          AND PRODUCT_CODE &gt;= #{startProductCode}
+        LIMIT #{productDataCnt}
+    </select>
+
+    <insert id="save"  parameterType="com.life.muna.like.domain.ProductLike">
+        INSERT INTO TB_PRODUCT_LIKE (PRODUCT_CODE, USER_CODE, INSERT_DATE, UPDATE_DATE)
+        VALUES ( #{productCode}, #{userCode}, #{requestContent}, now(), now());
+    </insert>
+
+    <delete id="deleteByUserCodeAndProductCode">
+        DELETE FROM TB_PRODUCT_LIKE
+        WHERE USER_CODE = #{userCode}
+          AND PRODUCT_CODE = #{productCode}
+    </delete>
+</mapper>

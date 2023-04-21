@@ -105,6 +105,7 @@ public class ProductController {
                                         "userProfileImage": byte[],
                                         "userLevel": "BASIC",
                                         "isRequested": false,
+                                        "isLiked": false
                                       }
                                       "message": "상품 상세 조회 성공"
                                     }""")))
