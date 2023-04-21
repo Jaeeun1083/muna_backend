@@ -6,6 +6,7 @@ import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.like.mapper.ProductLikeMapper;
 import com.life.muna.location.domain.Location;
 import com.life.muna.location.mapper.LocationMapper;
+import com.life.muna.product.domain.Product;
 import com.life.muna.product.domain.enums.LocationRange;
 import com.life.muna.product.dto.*;
 import com.life.muna.product.mapper.ProductMapper;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,15 +31,13 @@ public class ProductService {
     private ProductLikeMapper productLikeMapper;
     private UserMapper userMapper;
     private LocationMapper locationMapper;
-    private JwtTokenProvider jwtTokenProvider;
 
-    public ProductService(ProductMapper productMapper, ReqProductMapper reqProductMapper, ProductLikeMapper productLikeMapper, UserMapper userMapper, LocationMapper locationMapper, JwtTokenProvider jwtTokenProvider) {
+    public ProductService(ProductMapper productMapper, ReqProductMapper reqProductMapper, ProductLikeMapper productLikeMapper, UserMapper userMapper, LocationMapper locationMapper) {
         this.productMapper = productMapper;
         this.reqProductMapper = reqProductMapper;
         this.productLikeMapper = productLikeMapper;
         this.userMapper = userMapper;
         this.locationMapper = locationMapper;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public List<ProductListResponse> getProductList(String emailFromToken, ProductListRequest productListRequest) {
@@ -76,6 +76,20 @@ public class ProductService {
         boolean isRequested = reqProductMapper.existsByUserCodeAndProductCode(userCode, productCode);
         boolean isLiked = productLikeMapper.existsByUserCodeAndProductCode(userCode, productCode);
         return productDetailResponse.setMyInformation(isRequested, isLiked);
+    }
+
+    public List<ProductRegiListResponse> getRegisteredProductList(String emailFromToken, int page) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+
+        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
+        List<Product> productList = productMapper.findProductByUserCode(userCode, offset, PAGE_SIZE);
+        List<ProductRegiListResponse> productRegiListResponses = new ArrayList<>();
+        for (Product product : productList) {
+            int requestCount = reqProductMapper.findChatReqCountByProductCode(product.getProductCode());
+            ProductRegiListResponse response = ProductRegiListResponse.of(product, requestCount);
+            productRegiListResponses.add(response);
+        }
+        return productRegiListResponses;
     }
 
     private Long subStringValue(int beginIndex, int endIndex, Long value) {

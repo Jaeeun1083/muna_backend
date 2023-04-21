@@ -118,4 +118,41 @@ public class ProductController {
                         .message("상품 상세 조회 성공").build());
     }
 
+    /**
+     * 상품 등록 내역 조회 API
+     * */
+    @ApiOperation(value = "상품 등록 내역 조회")
+    @GetMapping("/register/list")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": [
+                                        {
+                                          "productCode": 1,
+                                          "title": "타이틀1",
+                                          "thumbnail": byte[],
+                                          "requestCount": 0,
+                                          "mcoin": 1,
+                                          "productStatus": true,
+                                        },
+                                      ]
+                                      "message": "상품 등록 내역 조회 성공"
+                                    }""")))
+    public ResponseEntity<CommonResponse> getRegisteredProductList(@RequestParam int page, HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(productService.getRegisteredProductList(email, page))
+                        .message("상품 등록 내역 조회 성공").build());
+    }
+
 }

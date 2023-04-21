@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface ProductMapper {
     List<ProductListResponse> findProductList(ProductListRequest productListRequest);
     Optional<Product> findProductByProductCode(@Param("productCode") Long productCode);
+    List<Product> findProductByUserCode(@Param("userCode") Long userCode, @Param("offset") int offset, @Param("pageSize") int pageSize);
     Optional<ProductDetailResponse> findProductDetailByProductCode(@Param("productCode") Long productCode);
     int updateReqCnt(@Param("productCode") Long productCode, @Param("reqCnt") int reqCnt);
     int saveProductDetail(ProductDetail productDetail);

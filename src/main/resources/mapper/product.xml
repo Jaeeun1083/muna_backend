@@ -39,6 +39,13 @@
         WHERE PRODUCT_CODE = #{productCode}
     </select>
 
+    <select id="findProductByUserCode" resultType="com.life.muna.product.domain.Product">
+        SELECT PRODUCT_CODE, USER_CODE, LOCATION_DONG_CD, CATEGORY, TITLE, THUMBNAIL, PRODUCT_STATUS, MCOIN, REQ_CNT, INSERT_DATE, UPDATE_DATE
+        FROM TB_PRODUCT
+        WHERE USER_CODE = #{userCode}
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
     <select id="findProductDetailByProductCode" parameterType="Long" resultType="com.life.muna.product.dto.ProductDetailResponse">
         SELECT d.PRODUCT_CODE, d.CONTENT, d.IMAGE_LINK, d.IMAGE_CNT, d.LIKES, d.VIEWS,
                CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM), p.CATEGORY, p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE,
