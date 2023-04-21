@@ -40,9 +40,9 @@ public class ReqProductService {
 
     public Boolean requestShareProduct(String emailFromToken, ProductShareRequest productShareRequest) {
         Long productCode = productShareRequest.getProductCode();
-        Long userCode = productShareRequest.getUserCode();
-
-        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, userCode);
+//        Long userCode = productShareRequest.getUserCode();
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+//        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, userCode);
         Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
         if(findProductOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
         Product findProduct = findProductOptional.get();
@@ -79,7 +79,7 @@ public class ReqProductService {
 
     public List<ReqProductListResponse> getRequestProductList(String emailFromToken, int startProductCode, int productDataCnt) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
-        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, userCode);
+//        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, userCode);
         List<Long> productCodeList = reqProductMapper.findProductCodeByUserCode(userCode, startProductCode, productDataCnt);
         List<ReqProductListResponse> reqProductListResponses = new ArrayList<>();
         for (long productCode: productCodeList) {

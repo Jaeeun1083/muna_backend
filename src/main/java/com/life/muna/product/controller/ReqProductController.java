@@ -84,11 +84,12 @@ public class ReqProductController {
                                       "message": "상품 나눔 요청 성공"
                                     }""")))
     public ResponseEntity<CommonResponse> requestShareProduct(@PathVariable Long productCode, @RequestBody @Valid ProductShareRequest productShareRequest, HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+
         LOG.info("requestShareProduct productCode: " + productCode);
-        LOG.info("requestShareProduct userCode: " + productShareRequest.getUserCode());
+        LOG.info("requestShareProduct email: " + email);
         LOG.info("requestShareProduct requestContent: " + productShareRequest.getRequestContent());
 
-        String email = (String) request.getAttribute("email");
         productShareRequest.setProductCode(productCode);
 
         Map<String, Boolean> data = new HashMap<String, Boolean>();

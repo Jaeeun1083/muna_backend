@@ -31,11 +31,12 @@ public class LocationService {
     }
 
     public LocationUpdateResponse updateLocation (String emailFromToken, LocationUpdateRequest locationUpdateRequest) {
-        validateEmailFromTokenAndUserCode(emailFromToken, locationUpdateRequest.getUserCode());
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+//        validateEmailFromTokenAndUserCode(emailFromToken, locationUpdateRequest.getUserCode());
         Location location = findLocation(locationUpdateRequest.getLocation());
         LOG.info("Update Location user : {}", emailFromToken);
         LOG.info("Update Location 시: {}, 구: {}, 동: {}, 동 하위: {} ", location.getLocationSiNm(), location.getLocationGuNm(), location.getLocationDongNm(), location.getLocationDongSubNm());
-        userMapper.saveLocation(locationUpdateRequest.getUserCode(), location.getLocationDongCd());
+        userMapper.saveLocation(userCode, location.getLocationDongCd());
         return LocationUpdateResponse.of(location);
     }
 

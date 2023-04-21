@@ -22,6 +22,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final Logger LOG = LoggerFactory.getLogger(ProductService.class);
+    private final static Integer PAGE_SIZE = 30;
 
     private ProductMapper productMapper;
     private ReqProductMapper reqProductMapper;
@@ -40,8 +41,9 @@ public class ProductService {
     }
 
     public List<ProductListResponse> getProductList(String emailFromToken, ProductListRequest productListRequest) {
-        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, productListRequest.getUserCode());
-        User user = userMapper.findUserByUserCode(productListRequest.getUserCode()).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE));
+//        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, productListRequest.getUserCode());
+//        User user = userMapper.findUserByUserCode(productListRequest.getUserCode()).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE));
+        User user =  userMapper.findUserByEmail(emailFromToken).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE));
         if(user.getLocationDongCd() == null) throw new BusinessException(ErrorCode.UNPROCESSABLE_USER_LOCATION);
         Location location = locationMapper.findByLocationDongCd(user.getLocationDongCd());
         List<ProductListResponse> productList;
@@ -54,6 +56,7 @@ public class ProductService {
             default -> null;
         };
         productListRequest.setLocationCode(locationCode);
+        productListRequest.setPageInfo(PAGE_SIZE);
         productList = productMapper.findProductList(productListRequest);
         return productList;
     }
