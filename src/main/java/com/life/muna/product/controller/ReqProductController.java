@@ -155,6 +155,7 @@ public class ReqProductController {
                                       "statusCode": 200,
                                       "data": [
                                         {
+                                          "productCode": 1,
                                           "title": "타이틀1",
                                           "thumbnail": byte[],
                                           "requestCount": 0,

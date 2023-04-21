@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class ReqProductListResponse {
+    private Long productCode;
     private String title;
     private byte[] thumbnail;
     private Integer requestCount;
@@ -13,7 +14,8 @@ public class ReqProductListResponse {
     private boolean productStatus;
 
     @Builder
-    public ReqProductListResponse(String title, byte[] thumbnail, Integer requestCount, Integer mcoin, boolean productStatus) {
+    public ReqProductListResponse(Long productCode, String title, byte[] thumbnail, Integer requestCount, Integer mcoin, boolean productStatus) {
+        this.productCode = productCode;
         this.title = title;
         this.thumbnail = thumbnail;
         this.requestCount = requestCount;
@@ -23,6 +25,7 @@ public class ReqProductListResponse {
 
     public static ReqProductListResponse of(Product product, int requestCount) {
         return ReqProductListResponse.builder()
+                .productCode(product.getProductCode())
                 .title(product.getTitle())
                 .thumbnail(product.getThumbnail())
                 .requestCount(requestCount)
