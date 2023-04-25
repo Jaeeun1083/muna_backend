@@ -82,6 +82,12 @@
         WHERE PRODUCT_CODE = #{productCode}
     </update>
 
+    <update id="updateViewCnt">
+        UPDATE TB_PRODUCT_DETAIL
+        SET VIEWS = #{views}
+        WHERE PRODUCT_CODE = #{productCode}
+    </update>
+
     <insert id="saveProductDetail" parameterType="com.life.muna.product.domain.ProductDetail">
         INSERT INTO TB_PRODUCT_DETAIL (PRODUCT_CODE, USER_CODE, CONTENT, INSERT_DATE, UPDATE_DATE)
         VALUES (#{productCode}, #{userCode}, #{content}, #{insertDate}, #{updateDate})

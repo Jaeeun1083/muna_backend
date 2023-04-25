@@ -32,8 +32,7 @@ public class ProductDetailResponse {
     private String userNickname;
     private byte[] userProfileImage;
     private UserLevel userLevel;
-    private Boolean isRequested;
-    private Boolean isLiked;
+    private Boolean isMyProduct;
 
     @Builder
     public ProductDetailResponse(Long productCode, String content, String imageLink, Integer imageCnt, Integer likes, Integer views, String location, String category, String title, String thumbnail, boolean productStatus, Integer mcoin, Integer reqCnt, Date insertDate, Date updateDate, Long userCode) {
@@ -55,16 +54,11 @@ public class ProductDetailResponse {
         this.userCode = userCode;
     }
 
-    public ProductDetailResponse setSellerData(User user) {
+    public ProductDetailResponse setSellerData(User user, boolean isMe) {
         this.userProfileImage = user.getProfileImage();
         this.userNickname = user.getNickname();
         this.userLevel = user.getUserLevel();
-        return this;
-    }
-
-    public ProductDetailResponse setMyInformation(boolean isRequested, boolean isLiked) {
-        this.isRequested = isRequested;
-        this.isLiked = isLiked;
+        this.isMyProduct = isMe;
         return this;
     }
 

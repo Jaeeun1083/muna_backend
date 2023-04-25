@@ -128,8 +128,7 @@ public class ProductController {
                                         "userNickname": "마루도키",
                                         "userProfileImage": byte[],
                                         "userLevel": "BASIC",
-                                        "isRequested": false,
-                                        "isLiked": false
+                                        "isMyProduct": false,
                                       }
                                       "message": "상품 상세 조회 성공"
                                     }""")))
@@ -140,6 +139,37 @@ public class ProductController {
                         .statusCode(HttpStatus.OK.value())
                         .data(productService.getProduct(email, productCode))
                         .message("상품 상세 조회 성공").build());
+    }
+
+    /**
+     * 상품에 대한 내 Like, Request 조회
+     * */
+    @ApiOperation(value = "상품에 대한 내 정보 조회")
+    @PostMapping("/{productCode}/me")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "isLiked": false,
+                                        "isRequested": false,
+                                      }
+                                      "message": "상품에 대한 내 정보 조회 성공"
+                                    }""")))
+    public ResponseEntity<CommonResponse> getMyInfoByProduct(@PathVariable Long productCode, HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(productService.getMyInfoOfProductResponse(email, productCode))
+                        .message("상품에 대한 내 정보 조회 성공").build());
     }
 
     /**

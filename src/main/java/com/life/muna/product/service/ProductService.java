@@ -68,12 +68,18 @@ public class ProductService {
         Long sellerCode = productDetailResponse.getUserCode();
         Optional<User> sellerOptional = userMapper.findUserByUserCode(sellerCode);
         if (sellerOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_SELLER);
-        productDetailResponse.setSellerData(sellerOptional.get());
 
-        //TODO 회원당 조회수 중복 X -> 조회수 테이블 필요. 무조건 조회수 늘어남 -> product detail 테이블의 like +1
+        boolean isMe = sellerCode.equals(userCode);
+        if (!isMe) productMapper.updateViewCnt(productCode, productDetailResponse.getViews() + 1);
+        return productDetailResponse.setSellerData(sellerOptional.get(), isMe);
+    }
+
+    public MyInfoOfProductResponse getMyInfoOfProductResponse(String emailFromToken, Long productCode) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+
         boolean isRequested = reqProductMapper.existsByUserCodeAndProductCode(userCode, productCode);
         boolean isLiked = productLikeMapper.existsByUserCodeAndProductCode(userCode, productCode);
-        return productDetailResponse.setMyInformation(isRequested, isLiked);
+        return MyInfoOfProductResponse.setMyInformation(isRequested, isLiked);
     }
 
     public List<ProductRegiListResponse> getRegisteredProductList(Long userCode, int page) {
