@@ -1,6 +1,6 @@
 package com.life.muna.product.service;
 
-import com.life.muna.auth.util.JwtTokenProvider;
+import com.life.muna.common.dto.MaxProductInfoResponse;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.like.mapper.ProductLikeMapper;
@@ -41,8 +41,6 @@ public class ProductService {
     }
 
     public List<ProductListResponse> getProductList(String emailFromToken, ProductListRequest productListRequest) {
-//        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, productListRequest.getUserCode());
-//        User user = userMapper.findUserByUserCode(productListRequest.getUserCode()).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE));
         User user =  userMapper.findUserByEmail(emailFromToken).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE));
         if(user.getLocationDongCd() == null) throw new BusinessException(ErrorCode.UNPROCESSABLE_USER_LOCATION);
         Location location = locationMapper.findByLocationDongCd(user.getLocationDongCd());
@@ -78,8 +76,8 @@ public class ProductService {
         return productDetailResponse.setMyInformation(isRequested, isLiked);
     }
 
-    public List<ProductRegiListResponse> getRegisteredProductList(String emailFromToken, int page) {
-        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+    public List<ProductRegiListResponse> getRegisteredProductList(Long userCode, int page) {
+//        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
 
         int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
         List<Product> productList = productMapper.findProductByUserCode(userCode, offset, PAGE_SIZE);
@@ -90,6 +88,14 @@ public class ProductService {
             productRegiListResponses.add(response);
         }
         return productRegiListResponses;
+    }
+
+    public MaxProductInfoResponse getMaxProductInfo() {
+        return productMapper.findMaxProductInfo(PAGE_SIZE);
+    }
+
+    public MaxProductInfoResponse getMaxRegisteredProductInfo(Long userCode) {
+        return productMapper.findMaxRegisteredProductInfo(userCode, PAGE_SIZE);
     }
 
     private Long subStringValue(int beginIndex, int endIndex, Long value) {

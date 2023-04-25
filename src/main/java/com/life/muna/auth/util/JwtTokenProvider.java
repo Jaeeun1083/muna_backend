@@ -86,6 +86,10 @@ public class JwtTokenProvider {
         }
     }
 
+    public Long getUserCodeFromEmail(String emailFromToken) {
+        return userMapper.findUserCodeByEmail(emailFromToken);
+    }
+
     public void validateEmailFromTokenAndUserCode(String emailFromToken, Long userCode) {
         Long findUserCode = userMapper.findUserCodeByEmail(emailFromToken);
         if (findUserCode == null) throw new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE);

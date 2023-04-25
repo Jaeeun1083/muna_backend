@@ -1,6 +1,7 @@
 package com.life.muna.product.service;
 
 import com.life.muna.auth.util.JwtTokenProvider;
+import com.life.muna.common.dto.MaxProductInfoResponse;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.product.domain.Product;
@@ -75,8 +76,7 @@ public class ReqProductService {
         return requestChatResult != 0;
     }
 
-    public List<ReqProductListResponse> getRequestProductList(String emailFromToken, int page) {
-        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+    public List<ReqProductListResponse> getRequestProductList(Long userCode, int page) {
         int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
         List<Long> productCodeList = reqProductMapper.findProductCodeByUserCode(userCode, offset, PAGE_SIZE);
         List<ReqProductListResponse> reqProductListResponses = new ArrayList<>();
@@ -93,4 +93,7 @@ public class ReqProductService {
         return reqProductListResponses;
     }
 
+    public MaxProductInfoResponse getMaxRequestProductInfo(Long userCode) {
+        return reqProductMapper.findMaxRequestProductInfo(userCode, PAGE_SIZE);
+    }
 }

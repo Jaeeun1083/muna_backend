@@ -3,12 +3,26 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.life.muna.product.mapper.ProductMapper">
+    <select id="findMaxProductInfo" resultType="com.life.muna.common.dto.MaxProductInfoResponse">
+        SELECT CEIL (count(*) / #{pageSize}), MAX(PRODUCT_CODE)
+        FROM TB_PRODUCT
+    </select>
+
+    <select id="findMaxRegisteredProductInfo" resultType="com.life.muna.common.dto.MaxProductInfoResponse">
+        SELECT CEIL (count(*) / #{pageSize}), MAX(PRODUCT_CODE)
+        FROM TB_PRODUCT
+        WHERE USER_CODE = #{userCode}
+    </select>
+
     <select id="findProductList" parameterType="com.life.muna.product.dto.ProductListRequest" resultType="com.life.muna.product.dto.ProductListResponse">
         SELECT p.PRODUCT_CODE, CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM, ' ', tl.LOCATION_DONG_SUB_NM),
         p.CATEGORY,  p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE
         FROM TB_PRODUCT p
         JOIN TB_LOCATION_TEMP tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
         WHERE 1=1
+        <if test="maxProductCode &gt; 0">
+            AND PRODUCT_CODE &lt;= #{maxProductCode}
+        </if>
         <if test="locationRange == 'L001' or locationRange == 'L002'">
             AND p.LOCATION_DONG_CD LIKE CONCAT(#{locationCode}, '%')
         </if>

@@ -14,14 +14,13 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class ProductListRequest {
-//    @ApiModelProperty(example = "25", required = true)
-//    @NotNull(message = "유저 코드는 필수 입력 값 입니다.")
-//    private Long userCode;
-
     @ApiModelProperty(example = "1", required = true)
     @NotNull(message = "페이지 넘버는 필수 입력 값 입니다.")
     @Min(value = 1, message = "페이지는 1 이상의 값이어야 합니다.")
     private Integer page;
+
+    @ApiModelProperty(example = "0")
+    private Long maxProductCode;
 
     @JsonIgnore
     private int pageSize;

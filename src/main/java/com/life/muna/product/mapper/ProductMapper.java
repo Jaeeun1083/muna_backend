@@ -1,5 +1,6 @@
 package com.life.muna.product.mapper;
 
+import com.life.muna.common.dto.MaxProductInfoResponse;
 import com.life.muna.product.domain.Product;
 import com.life.muna.product.domain.ProductDetail;
 import com.life.muna.product.dto.ProductDetailResponse;
@@ -13,6 +14,8 @@ import java.util.Optional;
 
 @Mapper
 public interface ProductMapper {
+    MaxProductInfoResponse findMaxProductInfo(@Param("pageSize") int pageSize);
+    MaxProductInfoResponse findMaxRegisteredProductInfo(@Param("userCode") Long userCode, @Param("pageSize") int pageSize);
     List<ProductListResponse> findProductList(ProductListRequest productListRequest);
     Optional<Product> findProductByProductCode(@Param("productCode") Long productCode);
     List<Product> findProductByUserCode(@Param("userCode") Long userCode, @Param("offset") int offset, @Param("pageSize") int pageSize);

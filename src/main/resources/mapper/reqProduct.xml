@@ -4,14 +4,20 @@
 
 <mapper namespace="com.life.muna.product.mapper.ReqProductMapper">
 
+    <select id="existsByUserCodeAndProductCode" parameterType="Long" resultType="boolean">
+        SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_PRODUCT_REQ WHERE USER_CODE=#{userCode} AND PRODUCT_CODE=#{productCode} LIMIT 1), 0)
+    </select>
+
+    <select id="findMaxRequestProductInfo" resultType="com.life.muna.common.dto.MaxProductInfoResponse">
+        SELECT CEIL (count(*) / #{pageSize}), MAX(PRODUCT_CODE)
+        FROM TB_PRODUCT_REQ
+        WHERE USER_CODE = #{userCode}
+    </select>
+
     <select id="findChatReqByProductCode" parameterType="Long" resultType="com.life.muna.product.domain.ReqProduct">
         SELECT *
         FROM TB_PRODUCT_REQ
         WHERE PRODUCT_CODE = #{productCode}
-    </select>
-
-    <select id="existsByUserCodeAndProductCode" parameterType="Long" resultType="boolean">
-        SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_PRODUCT_REQ WHERE USER_CODE=#{userCode} AND PRODUCT_CODE=#{productCode} LIMIT 1), 0)
     </select>
 
     <select id="findChatReqCountByUserCode" parameterType="Long" resultType="int">
