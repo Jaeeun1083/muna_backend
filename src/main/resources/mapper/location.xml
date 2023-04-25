@@ -6,7 +6,7 @@
 
     <select id="findByLocationNm" parameterType="String" resultType="com.life.muna.location.domain.Location">
         SELECT LOCATION_SI_CD, LOCATION_SI_NM, LOCATION_GU_CD, LOCATION_GU_NM, LOCATION_DONG_CD, LOCATION_DONG_NM, LOCATION_DONG_SUB_NM, LOCATION_LATITUDE, LOCATION_LONGITUDE
-        FROM TB_LOCATION
+        FROM TB_LOCATION_TEMP
         WHERE LOCATION_DONG_NM LIKE CONCAT('%', #{locationDongNm}, '%')
           AND LOCATION_GU_NM LIKE CONCAT('%', #{locationGuNm}, '%')
           AND LOCATION_SI_NM = #{locationSiNm}
@@ -15,7 +15,7 @@
 
     <select id="findByLocationNmWithSub" parameterType="String" resultType="com.life.muna.location.domain.Location">
         SELECT LOCATION_SI_CD, LOCATION_SI_NM, LOCATION_GU_CD, LOCATION_GU_NM, LOCATION_DONG_CD, LOCATION_DONG_NM, LOCATION_DONG_SUB_NM, LOCATION_LATITUDE, LOCATION_LONGITUDE
-        FROM TB_LOCATION
+        FROM TB_LOCATION_TEMP
         WHERE LOCATION_DONG_NM = #{locationDongNm}
           AND LOCATION_DONG_SUB_NM = #{locationDongSubNm}
           AND LOCATION_GU_NM LIKE CONCAT('%', #{locationGuNm}, '%')
@@ -24,13 +24,13 @@
 
     <select id="findByLocationDongCd" parameterType="Long" resultType="com.life.muna.location.domain.Location">
         SELECT LOCATION_SI_CD, LOCATION_SI_NM, LOCATION_GU_CD, LOCATION_GU_NM, LOCATION_DONG_CD, LOCATION_DONG_NM, LOCATION_DONG_SUB_NM, LOCATION_LATITUDE, LOCATION_LONGITUDE
-        FROM TB_LOCATION
+        FROM TB_LOCATION_TEMP
         WHERE LOCATION_DONG_CD = #{locationDongCd}
     </select>
 
     <select id="countByLocationGuNm" parameterType="String" resultType="int">
         SELECT COUNT(*)
-        FROM TB_LOCATION
+        FROM TB_LOCATION_TEMP
         WHERE LOCATION_GU_NM LIKE CONCAT('%', #{locationGuNm}, '%')
     </select>
 

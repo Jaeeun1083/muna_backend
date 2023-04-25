@@ -17,13 +17,12 @@ import java.util.Optional;
 
 @Service
 public class ReqProductService {
-    private static int MAX_REQUEST = 5;
+    private static final int MAX_REQUEST = 5;
     private final static int PAGE_SIZE = 30;
     private final ProductMapper productMapper;
-    private JwtTokenProvider jwtTokenProvider;
-    private ReqProductMapper reqProductMapper;
-    private UserMapper userMapper;
-
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ReqProductMapper reqProductMapper;
+    private final UserMapper userMapper;
 
     public ReqProductService(ProductMapper productMapper, JwtTokenProvider jwtTokenProvider, ReqProductMapper reqProductMapper, UserMapper userMapper) {
         this.productMapper = productMapper;
@@ -41,9 +40,7 @@ public class ReqProductService {
 
     public Boolean requestShareProduct(String emailFromToken, ProductShareRequest productShareRequest) {
         Long productCode = productShareRequest.getProductCode();
-//        Long userCode = productShareRequest.getUserCode();
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
-//        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, userCode);
         Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
         if(findProductOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
         Product findProduct = findProductOptional.get();
@@ -80,7 +77,6 @@ public class ReqProductService {
 
     public List<ReqProductListResponse> getRequestProductList(String emailFromToken, int page) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
-//        jwtTokenProvider.validateEmailFromTokenAndUserCode(emailFromToken, userCode);
         int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
         List<Long> productCodeList = reqProductMapper.findProductCodeByUserCode(userCode, offset, PAGE_SIZE);
         List<ReqProductListResponse> reqProductListResponses = new ArrayList<>();

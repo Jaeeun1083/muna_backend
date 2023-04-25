@@ -7,7 +7,7 @@
         SELECT p.PRODUCT_CODE, CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM, ' ', tl.LOCATION_DONG_SUB_NM),
         p.CATEGORY,  p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE
         FROM TB_PRODUCT p
-        JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
+        JOIN TB_LOCATION_TEMP tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
         WHERE 1=1
         <if test="locationRange == 'L001' or locationRange == 'L002'">
             AND p.LOCATION_DONG_CD LIKE CONCAT(#{locationCode}, '%')
@@ -52,13 +52,19 @@
                p.USER_CODE
         FROM TB_PRODUCT p
                  JOIN TB_PRODUCT_DETAIL d ON p.PRODUCT_CODE = d.PRODUCT_CODE
-                 JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
+                 JOIN TB_LOCATION_TEMP tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
         WHERE p.PRODUCT_CODE = #{productCode}
     </select>
 
     <update id="updateReqCnt">
         UPDATE TB_PRODUCT
         SET REQ_CNT = #{reqCnt}
+        WHERE PRODUCT_CODE = #{productCode}
+    </update>
+
+    <update id="updateLikeCnt">
+        UPDATE TB_PRODUCT_DETAIL
+        SET LIKES = #{likes}
         WHERE PRODUCT_CODE = #{productCode}
     </update>
 

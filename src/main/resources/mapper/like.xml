@@ -8,6 +8,11 @@
         SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_PRODUCT_LIKE WHERE USER_CODE=#{userCode} AND PRODUCT_CODE=#{productCode} LIMIT 1), 0)
     </select>
 
+    <select id="findMaxProductLikeInfo" parameterType="int" resultType="com.life.muna.common.dto.MaxProductInfoResponse">
+        SELECT CEIL (count(*) / #{pageSize}), MAX(PRODUCT_CODE)
+        FROM TB_PRODUCT_LIKE
+    </select>
+
     <select id="findProductLikeByUserCode" parameterType="Long" resultType="com.life.muna.like.domain.ProductLike">
         SELECT *
         FROM TB_PRODUCT_LIKE
@@ -24,13 +29,15 @@
         SELECT PRODUCT_CODE
         FROM TB_PRODUCT_LIKE
         WHERE USER_CODE = #{userCode}
-          AND PRODUCT_CODE &gt;= #{startProductCode}
-        LIMIT #{productDataCnt}
+        <if test="maxProductCode &gt; 0">
+            AND PRODUCT_CODE &lt;= #{maxProductCode}
+        </if>
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <insert id="save"  parameterType="com.life.muna.like.domain.ProductLike">
+    <insert id="save"  parameterType="java.lang.Long">
         INSERT INTO TB_PRODUCT_LIKE (PRODUCT_CODE, USER_CODE, INSERT_DATE, UPDATE_DATE)
-        VALUES ( #{productCode}, #{userCode}, #{requestContent}, now(), now());
+        VALUES ( #{productCode}, #{userCode}, now(), now());
     </insert>
 
     <delete id="deleteByUserCodeAndProductCode">

@@ -18,6 +18,7 @@ public interface ProductMapper {
     List<Product> findProductByUserCode(@Param("userCode") Long userCode, @Param("offset") int offset, @Param("pageSize") int pageSize);
     Optional<ProductDetailResponse> findProductDetailByProductCode(@Param("productCode") Long productCode);
     int updateReqCnt(@Param("productCode") Long productCode, @Param("reqCnt") int reqCnt);
+    int updateLikeCnt(@Param("productCode") Long productCode, @Param("likes") int likes);
     int saveProductDetail(ProductDetail productDetail);
     int save(Product product);
 }

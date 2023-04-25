@@ -37,6 +37,11 @@ public enum ErrorCode {
     DISABLED_PRODUCT_REQUEST(400, "나눔 요청이 불가능한 상품입니다."),
     CANNOT_REQUEST_MY_PRODUCT(400, "자신이 등록한 상품은 나눔 요청을 할 수 없습니다."),
     ALREADY_PRODUCT_REQUEST(409, "이미 나눔을 요청한 상품입니다."),
+
+    DISABLED_PRODUCT_LIKE(400, "좋아요 요청이 불가능한 상품입니다."),
+    CANNOT_REQUEST_MY_LIKE(400, "자신이 등록한 상품은 좋아요 요청을 할 수 없습니다."),
+    ALREADY_PRODUCT_LIKE(409, "이미 좋아요을 요청한 상품입니다."),
+    NOT_FOUND_PRODUCT_LIKE(404, "해당 상품에 보낸 요청을 찾을 수 없습니다."),
     EXCEED_PRODUCT_REQUEST_COUNT(400, "신청 가능한 나눔 요청 횟수를 넘었습니다."),
 
     /**
