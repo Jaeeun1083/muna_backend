@@ -108,9 +108,10 @@ public class LocationService {
         System.out.println("output : " + output);
         return String.valueOf(output);
     }
-    private void validateEmailFromTokenAndUserCode(String emailFromToken, Long userCode) {
-        Long findUserCode = userMapper.findUserCodeByEmail(emailFromToken);
-        if (findUserCode == null) throw new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE);
-        if (!findUserCode.equals(userCode)) throw new BusinessException(ErrorCode.MISMATCH_TOKEN_USER_CODE);
+
+    public static String getLocationName(Location location) {
+        return location.getLocationSiNm() + DELIMITER + location.getLocationGuNm() + DELIMITER + location.getLocationDongNm()
+                + (location.getLocationDongSubNm() != null ? (DELIMITER + location.getLocationDongSubNm()) : null);
     }
+
 }

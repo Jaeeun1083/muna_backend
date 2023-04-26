@@ -12,7 +12,7 @@ import java.util.List;
 public interface ReqProductMapper {
     boolean existsByUserCodeAndProductCode(@Param("userCode") Long userCode, @Param("productCode")  Long productCode);
     MaxProductInfoResponse findMaxRequestProductInfo(@Param("userCode") Long userCode, @Param("pageSize") int pageSize);
-    ReqProduct findChatReqByProductCode(@Param("productCode")  Long productCode);
+    List<ReqProduct> findChatReqByProductCode(@Param("productCode")  Long productCode);
     int findChatReqCountByUserCode(@Param("userCode") Long userCode);
     int findChatReqCountByProductCode(@Param("productCode") Long productCode);
     List<Long> findProductCodeByUserCode(@Param("userCode") Long userCode, @Param("offset") int offset, @Param("pageSize") int pageSize);

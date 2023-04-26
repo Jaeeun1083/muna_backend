@@ -8,11 +8,13 @@ import com.life.muna.location.domain.Location;
 import com.life.muna.location.mapper.LocationMapper;
 import com.life.muna.product.domain.Product;
 import com.life.muna.product.domain.ProductDetail;
+import com.life.muna.product.domain.ReqProduct;
 import com.life.muna.product.domain.enums.LocationRange;
 import com.life.muna.product.dto.*;
 import com.life.muna.product.mapper.ProductMapper;
 import com.life.muna.product.mapper.ReqProductMapper;
 import com.life.muna.user.domain.User;
+import com.life.muna.product.dto.ReqUserProfile;
 import com.life.muna.user.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.life.muna.common.util.TimeConverter.convert;
+import static com.life.muna.location.service.LocationService.getLocationName;
 import static com.life.muna.product.dto.ProductCreateRequest.toProduct;
 import static com.life.muna.product.dto.ProductCreateRequest.toProductDetail;
 
@@ -148,6 +152,40 @@ public class ProductService {
         return productRegiListResponses;
     }
 
+    public ReqReceivedResponse getReceivedReqOfProduct(String emailFromToken, Long productCode) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+        ReqReceivedResponse reqReceived = new ReqReceivedResponse();
+
+        Optional<Product> productOptional = productMapper.findProductByProductCode(productCode);
+        Product product = productOptional.orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL));
+        if (!product.getUserCode().equals(userCode)) throw new BusinessException(ErrorCode.CANNOT_SEARCH_OTHER_PRODUCT);
+        int reqCnt = reqProductMapper.findChatReqCountByProductCode(productCode);
+
+        List<ReqProduct> reqProductList = reqProductMapper.findChatReqByProductCode(productCode);
+
+        reqReceived.setProduct(ProductRegiListResponse.of(product, reqCnt));
+
+        for (int i = 0; i < reqProductList.size(); i ++) {
+            Optional<User> userOptional = userMapper.findUserByUserCode(reqProductList.get(i).getUserCode());
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                Location location = locationMapper.findByLocationDongCd(user.getLocationDongCd());
+                String locationName = getLocationName(location);
+                ReqUserProfile reqUserProfile = ReqUserProfile.builder()
+                        .userNickname(user.getNickname())
+                        .userProfileImage(user.getProfileImage())
+                        .location(locationName)
+                        .reqContent(reqProductList.get(i).getReqContent())
+                        .chatStatus(reqProductList.get(i).getChatStatus())
+                        .insertDate(convert(reqProductList.get(i).getInsertDate()))
+                        .updateDate(convert(reqProductList.get(i).getUpdateDate()))
+                        .build();
+                reqReceived.addReqUserProfile(reqUserProfile);
+            }
+        }
+        return reqReceived;
+    }
+
     public MaxProductInfoResponse getMaxProductInfo() {
         return productMapper.findMaxProductInfo(PAGE_SIZE);
     }
@@ -160,5 +198,4 @@ public class ProductService {
         String strValue = Long.toString(value);
         return Long.parseLong(strValue.substring(beginIndex, endIndex));
     }
-
 }

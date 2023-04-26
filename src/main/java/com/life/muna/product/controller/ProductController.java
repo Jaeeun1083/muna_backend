@@ -262,4 +262,52 @@ public class ProductController {
                         .message("상품 등록 내역 조회 성공").build());
     }
 
+    /**
+     * 올린 상품에 대한 나눔 요청 리스트 조회 API
+     * */
+    @ApiOperation(value = "올린 상품에 대한 나눔 요청 조회")
+    @GetMapping("/{productCode}/req-received")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "product": {
+                                          "productCode": 1,
+                                          "title": "타이틀1",
+                                          "thumbnail": "섬네일1",
+                                          "reqCnt": 0,
+                                          "mcoin": 1,
+                                          "productStatus": true,
+                                        },
+                                        "reqUserProfile": [
+                                          {
+                                            "userNickname": "마루도키",
+                                            "userProfileImage": byte[],
+                                            "location": "서울특별시 은평구 신사1동",
+                                            "reqContent": "나눔 요청1",
+                                            "chatStatus": "REQ",
+                                            "insertDate": "2023-04-07 10:44:33",
+                                            "updateDate": "2023-04-07 10:44:33",
+                                          },
+                                        ],
+                                      }
+                                      "message": "상품에 대한 나눔 요청 조회"
+                                    }""")))
+    public ResponseEntity<CommonResponse> getReceivedReqOfProduct(@PathVariable Long productCode, HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(productService.getReceivedReqOfProduct(email, productCode))
+                        .message("상품에 대한 나눔 요청 조회").build());
+    }
+
 }

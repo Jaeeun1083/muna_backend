@@ -41,6 +41,7 @@ public enum ErrorCode {
     NOT_FOUND_SELLER(404, "해당 상품을 등록한 유저를 조회할 수 없습니다."),
     DISABLED_PRODUCT_REQUEST(400, "나눔 요청이 불가능한 상품입니다."),
     CANNOT_REQUEST_MY_PRODUCT(400, "자신이 등록한 상품은 나눔 요청을 할 수 없습니다."),
+    CANNOT_SEARCH_OTHER_PRODUCT(400, "다른 사람의 상품에 관해서는 조회할 수 없습니다."),
     ALREADY_PRODUCT_REQUEST(409, "이미 나눔을 요청한 상품입니다."),
 
     DISABLED_PRODUCT_LIKE(400, "좋아요 요청이 불가능한 상품입니다."),
