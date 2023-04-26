@@ -76,9 +76,10 @@ public class ReqProductService {
         return requestChatResult != 0;
     }
 
-    public List<ReqProductListResponse> getRequestProductList(Long userCode, int page) {
-        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
-        List<Long> productCodeList = reqProductMapper.findProductCodeByUserCode(userCode, offset, PAGE_SIZE);
+    public List<ReqProductListResponse> getRequestProductList(String emailFromToken) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+//        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
+        List<Long> productCodeList = reqProductMapper.findProductCodeByUserCode(userCode);
         List<ReqProductListResponse> reqProductListResponses = new ArrayList<>();
         for (long productCode: productCodeList) {
             Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
@@ -96,4 +97,5 @@ public class ReqProductService {
     public MaxProductInfoResponse getMaxRequestProductInfo(Long userCode) {
         return reqProductMapper.findMaxRequestProductInfo(userCode, PAGE_SIZE);
     }
+
 }

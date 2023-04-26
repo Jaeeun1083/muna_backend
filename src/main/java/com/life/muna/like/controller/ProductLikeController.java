@@ -119,40 +119,34 @@ public class ProductLikeController {
                             value = """
                                     {
                                       "statusCode": 200,
-                                      "data": {
-                                        "info": {
-                                          "productCount": 4,
-                                          "productCode": 45
+                                      "data": [
+                                        {
+                                          "productCode": 1,
+                                          "title": "타이틀1",
+                                          "thumbnail": byte[],
+                                          "reqCnt": 0,
+                                          "mcoin": 1,
+                                          "productStatus": true,
+                                          "insertDate": "2023.04.07 10:44:33",
+                                          "updateDate": "2023.04.20 12:57:59"
                                         },
-                                        "result": [
-                                          {
-                                            "productCode": 1,
-                                            "title": "타이틀1",
-                                            "thumbnail": byte[],
-                                            "reqCnt": 0,
-                                            "mcoin": 1,
-                                            "productStatus": true,
-                                            "insertDate": "2023.04.07 10:44:33",
-                                            "updateDate": "2023.04.20 12:57:59"
-                                          },
-                                        ]
-                                      },
+                                       ],
                                       "message": "상품 좋아요 요청 내역 조회 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getProductLiked(@RequestParam int page, Long maxProductCode, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> getProductLiked(HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
-        Map<String, Object> data = new HashMap<>();
-        if (maxProductCode == null || maxProductCode == 0) {
-            data.put("info", productLikeService.getMaxProductLikeInfo());
-        } else {
-            data.put("info", null);
-        }
-        List<ProductLikeListResponse> result = productLikeService.getProductLiked(email, page, maxProductCode);
-        data.put("result", result);
+//        Map<String, Object> data = new HashMap<>();
+//        if (maxProductCode == null || maxProductCode == 0) {
+//            data.put("info", productLikeService.getMaxProductLikeInfo());
+//        } else {
+//            data.put("info", null);
+//        }
+//        List<ProductLikeListResponse> result = productLikeService.getProductLiked(email, page, maxProductCode);
+//        data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(data)
+                        .data(productLikeService.getProductLiked(email))
                         .message("상품 좋아요 요청 내역 조회 성공").build());
     }
 

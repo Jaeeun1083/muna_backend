@@ -242,23 +242,24 @@ public class ProductController {
                                       },
                                       "message": "상품 등록 내역 조회 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getRegisteredProductList(@RequestParam int page, Long maxProductCode, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> getRegisteredProductList(HttpServletRequest request) {
+//    public ResponseEntity<CommonResponse> getRegisteredProductList(@RequestParam int page, Long maxProductCode, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
-        Long userCode = jwtTokenProvider.getUserCodeFromEmail(email);
+//        Long userCode = jwtTokenProvider.getUserCodeFromEmail(email);
 
-        Map<String, Object> data = new HashMap<>();
-        if (maxProductCode == null || maxProductCode == 0) {
-            data.put("info", productService.getMaxRegisteredProductInfo(userCode));
-        } else {
-            data.put("info", null);
-        }
+//        Map<String, Object> data = new HashMap<>();
+//        if (maxProductCode == null || maxProductCode == 0) {
+//            data.put("info", productService.getMaxRegisteredProductInfo(userCode));
+//        } else {
+//            data.put("info", null);
+//        }
+//        List<ProductRegiListResponse> result = productService.getRegisteredProductList(userCode, page);
+//        data.put("result", result);
 
-        List<ProductRegiListResponse> result = productService.getRegisteredProductList(userCode, page);
-        data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(data)
+                        .data(productService.getRegisteredProductList(email))
                         .message("상품 등록 내역 조회 성공").build());
     }
 

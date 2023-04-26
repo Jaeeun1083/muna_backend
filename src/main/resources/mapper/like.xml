@@ -8,9 +8,10 @@
         SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_PRODUCT_LIKE WHERE USER_CODE=#{userCode} AND PRODUCT_CODE=#{productCode} LIMIT 1), 0)
     </select>
 
-    <select id="findMaxProductLikeInfo" parameterType="int" resultType="com.life.muna.common.dto.MaxProductInfoResponse">
+    <select id="findMaxProductLikeInfo" resultType="com.life.muna.common.dto.MaxProductInfoResponse">
         SELECT CEIL (count(*) / #{pageSize}), MAX(PRODUCT_CODE)
         FROM TB_PRODUCT_LIKE
+        WHERE USER_CODE = #{userCode}
     </select>
 
     <select id="findProductLikeByUserCode" parameterType="Long" resultType="com.life.muna.like.domain.ProductLike">
@@ -29,10 +30,10 @@
         SELECT PRODUCT_CODE
         FROM TB_PRODUCT_LIKE
         WHERE USER_CODE = #{userCode}
-        <if test="maxProductCode &gt; 0">
-            AND PRODUCT_CODE &lt;= #{maxProductCode}
-        </if>
-        LIMIT #{pageSize} OFFSET #{offset}
+<!--        <if test="maxProductCode &gt; 0">-->
+<!--            AND PRODUCT_CODE &lt;= #{maxProductCode}-->
+<!--        </if>-->
+<!--        LIMIT #{pageSize} OFFSET #{offset}-->
     </select>
 
     <insert id="save"  parameterType="java.lang.Long">

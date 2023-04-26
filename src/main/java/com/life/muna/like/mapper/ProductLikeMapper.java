@@ -9,10 +9,10 @@ import java.util.List;
 @Mapper
 public interface ProductLikeMapper {
     boolean existsByUserCodeAndProductCode(@Param("userCode") Long userCode, @Param("productCode") Long productCode);
-    MaxProductInfoResponse findMaxProductLikeInfo(@Param("pageSize") int pageSize);
+    MaxProductInfoResponse findMaxProductLikeInfo(@Param("userCode") Long userCode, @Param("pageSize") int pageSize);
     int findProductLikeByUserCode(@Param("userCode") Long userCode);
     int findProductLikeCountByProductCode(@Param("productCode") Long productCode);
-    List<Long> findProductCodeByUserCode(@Param("userCode") Long userCode, @Param("offset") int offset, @Param("pageSize") int pageSize, @Param("maxProductCode") Long maxProductCode);
+    List<Long> findProductCodeByUserCode(@Param("userCode") Long userCode);
     int save(@Param("userCode") Long userCode, @Param("productCode") Long productCode);
     int deleteByUserCodeAndProductCode(@Param("userCode") Long userCode, @Param("productCode") Long productCode);
 }

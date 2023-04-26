@@ -138,11 +138,12 @@ public class ProductService {
         return MyInfoOfProductResponse.setMyInformation(isRequested, isLiked);
     }
 
-    public List<ProductRegiListResponse> getRegisteredProductList(Long userCode, int page) {
-//        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+//    public List<ProductRegiListResponse> getRegisteredProductList(Long userCode, int page) {
+    public List<ProductRegiListResponse> getRegisteredProductList(String emailFromToken) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
 
-        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
-        List<Product> productList = productMapper.findProductByUserCode(userCode, offset, PAGE_SIZE);
+//        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
+        List<Product> productList = productMapper.findProductByUserCode(userCode);
         List<ProductRegiListResponse> productRegiListResponses = new ArrayList<>();
         for (Product product : productList) {
             int requestCount = reqProductMapper.findChatReqCountByProductCode(product.getProductCode());

@@ -15,7 +15,7 @@ public interface ReqProductMapper {
     List<ReqProduct> findChatReqByProductCode(@Param("productCode")  Long productCode);
     int findChatReqCountByUserCode(@Param("userCode") Long userCode);
     int findChatReqCountByProductCode(@Param("productCode") Long productCode);
-    List<Long> findProductCodeByUserCode(@Param("userCode") Long userCode, @Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<Long> findProductCodeByUserCode(@Param("userCode") Long userCode);
     int deleteByUserCodeAndProductCode(@Param("userCode") Long userCode, @Param("productCode") Long productCode);
     int save (ProductShareRequest productShareRequest);
 }

@@ -68,11 +68,12 @@ public class ProductLikeService {
         return requestLikeResult != 0;
     }
 
-    public List<ProductLikeListResponse> getProductLiked(String emailFromToken, int page, Long maxProductCode) {
+    public List<ProductLikeListResponse> getProductLiked(String emailFromToken) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
 
-        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
-        List<Long> productCodeList = productLikeMapper.findProductCodeByUserCode(userCode, offset, PAGE_SIZE, maxProductCode);
+//        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
+//        List<Long> productCodeList = productLikeMapper.findProductCodeByUserCode(userCode, offset, PAGE_SIZE, maxProductCode);
+        List<Long> productCodeList = productLikeMapper.findProductCodeByUserCode(userCode);
 
         return Optional.ofNullable(productCodeList)
                 .map(List::stream)
@@ -83,8 +84,9 @@ public class ProductLikeService {
                 .collect(Collectors.toList());
     }
 
-    public MaxProductInfoResponse getMaxProductLikeInfo() {
-        return productLikeMapper.findMaxProductLikeInfo(PAGE_SIZE);
+    public MaxProductInfoResponse getMaxProductLikeInfo(String emailFromToken) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+        return productLikeMapper.findMaxProductLikeInfo(userCode, PAGE_SIZE);
     }
 
 }

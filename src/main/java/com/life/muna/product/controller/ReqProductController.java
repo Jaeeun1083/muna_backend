@@ -3,7 +3,6 @@ package com.life.muna.product.controller;
 import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.common.dto.CommonResponse;
 import com.life.muna.product.dto.ProductShareRequest;
-import com.life.muna.product.dto.ReqProductListResponse;
 import com.life.muna.product.service.ReqProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,9 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Api(tags = "상품 나눔 요청 API 정보 제공")
@@ -33,7 +30,6 @@ import java.util.Map;
 public class ReqProductController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final ReqProductService reqProductService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 보유한 나눔 신청 횟수 조회 API
@@ -159,42 +155,36 @@ public class ReqProductController {
                             value = """
                                     {
                                       "statusCode": 200,
-                                      "data": {
-                                        "info": {
-                                          "productCount": 4,
-                                          "productCode": 45
-                                        },
-                                        "result": [
-                                          {
-                                            "productCode": 1,
-                                            "title": "타이틀1",
-                                            "thumbnail": byte[],
-                                            "reqCnt": 0,
-                                            "mcoin": 1,
-                                            "productStatus": true,
-                                            },
-                                          ]
-                                        },
+                                      "data": [
+                                        {
+                                          "productCode": 1,
+                                          "title": "타이틀1",
+                                          "thumbnail": byte[],
+                                          "reqCnt": 0,
+                                          "mcoin": 1,
+                                          "productStatus": true,
+                                          },
+                                        ]
                                       "message": "상품 나눔 요청 내역 조회 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getRequestedProduct(@RequestParam Integer page, Long maxProductCode, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> getRequestedProduct(HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
-        Long userCode = jwtTokenProvider.getUserCodeFromEmail(email);
-
-        Map<String, Object> data = new HashMap<>();
-        if (maxProductCode == null || maxProductCode == 0) {
-            data.put("info", reqProductService.getMaxRequestProductInfo(userCode));
-        } else {
-            data.put("info", null);
-        }
-
-        List<ReqProductListResponse> result = reqProductService.getRequestProductList(userCode, page);
-        data.put("result", result);
+//        Long userCode = jwtTokenProvider.getUserCodeFromEmail(email);
+//
+//        Map<String, Object> data = new HashMap<>();
+//        if (maxProductCode == null || maxProductCode == 0) {
+//            data.put("info", reqProductService.getMaxRequestProductInfo(userCode));
+//        } else {
+//            data.put("info", null);
+//        }
+//
+//        List<ReqProductListResponse> result = reqProductService.getRequestProductList(userCode, page);
+//        data.put("result", result);
 
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(data)
+                        .data(reqProductService.getRequestProductList(email))
                         .message("상품 나눔 요청 내역 조회 성공").build());
     }
 
