@@ -36,4 +36,6 @@ spring:
     port: 6379
 ---
 image:
-  path: classpath:image/
+  default-path: classpath:image
+  upload-path: classpath:upload
+#  upload-path: app/muna/upload

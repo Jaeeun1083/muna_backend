@@ -89,11 +89,11 @@
     </update>
 
     <insert id="saveProductDetail" parameterType="com.life.muna.product.domain.ProductDetail">
-        INSERT INTO TB_PRODUCT_DETAIL (PRODUCT_CODE, USER_CODE, CONTENT, INSERT_DATE, UPDATE_DATE)
-        VALUES (#{productCode}, #{userCode}, #{content}, #{insertDate}, #{updateDate})
+        INSERT INTO TB_PRODUCT_DETAIL (PRODUCT_CODE, USER_CODE, CONTENT, IMAGE_LINK, IMAGE_CNT, INSERT_DATE, UPDATE_DATE)
+        VALUES (#{productCode}, #{userCode}, #{content}, #{imageLink}, #{imageCnt}, #{insertDate}, #{updateDate})
     </insert>
 
-    <insert id="save" parameterType="com.life.muna.product.domain.Product" >
+    <insert id="save" parameterType="com.life.muna.product.domain.Product">
         INSERT INTO TB_PRODUCT (USER_CODE, LOCATION_DONG_CD, CATEGORY, TITLE, THUMBNAIL, PRODUCT_STATUS, MCOIN, INSERT_DATE, UPDATE_DATE)
         VALUES (#{userCode}, #{locationDongCd}, #{category}, #{title}, #{thumbnail}, #{productStatus}, #{mcoin}, #{insertDate}, #{updateDate})
         <selectKey keyProperty="productCode" resultType="Long" order="AFTER">

@@ -31,6 +31,11 @@ public enum ErrorCode {
     /**
      * PRODUCT ErrorCode
      **/
+    FAILED_TO_CREATE_PRODUCT(500, "상품을 등록하는데 실패했습니다."),
+    NO_IMAGES_TO_UPLOAD(400, "업로드할 이미지가 없습니다."),
+    FAILED_TO_CREATE_DIRECTORY(500, "이미지 업로드를 위한 디렉토리 생성에 실패하였습니다."),
+    FAILED_TO_SAVE_IMAGE(500, "이미지 저장에 실패하였습니다."),
+
     NOT_FOUND_PRODUCT_DETAIL(404, "해당 코드의 상품을 찾을 수 없습니다."),
     NOT_FOUND_PRODUCT_REQ(404, "해당 상품에 보낸 요청을 찾을 수 없습니다."),
     NOT_FOUND_SELLER(404, "해당 상품을 등록한 유저를 조회할 수 없습니다."),

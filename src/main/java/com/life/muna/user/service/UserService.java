@@ -32,11 +32,11 @@ public class UserService {
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String NICKNAME_PATTERN = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*$";
 
-    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, @Value("${image.path}") String imagePath) {
+    public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, @Value("${image.default-path}") String imagePath) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.defaultImage = imagePath + "profile.jpg";
+        this.defaultImage = imagePath + "/profile.jpg";
     }
 
     public Boolean signUp(SignUpRequest signUpRequest) {

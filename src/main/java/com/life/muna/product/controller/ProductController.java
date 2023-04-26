@@ -2,6 +2,7 @@ package com.life.muna.product.controller;
 
 import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.common.dto.CommonResponse;
+import com.life.muna.product.dto.ProductCreateRequest;
 import com.life.muna.product.dto.ProductListRequest;
 import com.life.muna.product.dto.ProductListResponse;
 import com.life.muna.product.dto.ProductRegiListResponse;
@@ -34,6 +35,40 @@ public class ProductController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final ProductService productService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    /**
+     * 나눔 상품 등록 API
+     * */
+    @ApiOperation(value = "나눔 상품 등록")
+    @PostMapping("")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "result": true,
+                                      }
+                                      "message": "나눔 상품 등록 성공"
+                                    }""")))
+    public ResponseEntity<CommonResponse> createProduct(@RequestBody @Valid ProductCreateRequest productCreateRequest, HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+
+        Map<String, Boolean> data = new HashMap<>();
+        boolean result = productService.createProduct(email, productCreateRequest);
+        data.put("result", result);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(data)
+                        .message("나눔 상품 등록 성공").build());
+    }
 
     /**
      * 상품 목록 조회 API
