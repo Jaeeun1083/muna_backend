@@ -8,7 +8,6 @@ import com.life.muna.location.domain.Location;
 import com.life.muna.location.mapper.LocationMapper;
 import com.life.muna.product.domain.Product;
 import com.life.muna.product.domain.ProductDetail;
-import com.life.muna.product.domain.ReqProduct;
 import com.life.muna.product.domain.enums.LocationRange;
 import com.life.muna.product.dto.*;
 import com.life.muna.product.mapper.ProductMapper;
@@ -155,36 +154,37 @@ public class ProductService {
 
     public ReqReceivedResponse getReceivedReqOfProduct(String emailFromToken, Long productCode) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
-        ReqReceivedResponse reqReceived = new ReqReceivedResponse();
 
-        Optional<Product> productOptional = productMapper.findProductByProductCode(productCode);
-        Product product = productOptional.orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL));
+        Product product = productMapper.findProductByProductCode(productCode)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL));
         if (!product.getUserCode().equals(userCode)) throw new BusinessException(ErrorCode.CANNOT_SEARCH_OTHER_PRODUCT);
+
         int reqCnt = reqProductMapper.findChatReqCountByProductCode(productCode);
+        List<ReqUserProfile> reqUserProfileList = new ArrayList<>();
 
-        List<ReqProduct> reqProductList = reqProductMapper.findChatReqByProductCode(productCode);
+        reqProductMapper.findChatReqByProductCode(productCode)
+                .forEach(reqProduct -> {
+                    userMapper.findUserByUserCode(reqProduct.getUserCode())
+                            .ifPresent(user -> {
+                                Location location = locationMapper.findByLocationDongCd(user.getLocationDongCd());
+                                String locationName = getLocationName(location);
 
-        reqReceived.setProduct(ProductRegiListResponse.of(product, reqCnt));
+                                reqUserProfileList.add(ReqUserProfile.builder()
+                                        .userNickname(user.getNickname())
+                                        .userProfileImage(user.getProfileImage())
+                                        .location(locationName)
+                                        .reqContent(reqProduct.getReqContent())
+                                        .chatStatus(reqProduct.getChatStatus())
+                                        .insertDate(convert(reqProduct.getInsertDate()))
+                                        .updateDate(convert(reqProduct.getUpdateDate()))
+                                        .build());
+                            });
+                });
 
-        for (int i = 0; i < reqProductList.size(); i ++) {
-            Optional<User> userOptional = userMapper.findUserByUserCode(reqProductList.get(i).getUserCode());
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                Location location = locationMapper.findByLocationDongCd(user.getLocationDongCd());
-                String locationName = getLocationName(location);
-                ReqUserProfile reqUserProfile = ReqUserProfile.builder()
-                        .userNickname(user.getNickname())
-                        .userProfileImage(user.getProfileImage())
-                        .location(locationName)
-                        .reqContent(reqProductList.get(i).getReqContent())
-                        .chatStatus(reqProductList.get(i).getChatStatus())
-                        .insertDate(convert(reqProductList.get(i).getInsertDate()))
-                        .updateDate(convert(reqProductList.get(i).getUpdateDate()))
-                        .build();
-                reqReceived.addReqUserProfile(reqUserProfile);
-            }
-        }
-        return reqReceived;
+        return ReqReceivedResponse.builder()
+                .product(ProductRegiListResponse.of(product, reqCnt))
+                .reqUserProfileList(reqUserProfileList)
+                .build();
     }
 
     public MaxProductInfoResponse getMaxProductInfo() {
