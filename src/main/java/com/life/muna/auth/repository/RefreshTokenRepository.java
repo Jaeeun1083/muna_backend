@@ -25,7 +25,7 @@ public class RefreshTokenRepository {
     public void save(final String email, final RefreshToken refreshToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(email, refreshToken.getRefreshToken());
-        redisTemplate.expire(refreshToken.getRefreshToken(), refreshTokenValidityTime, TimeUnit.SECONDS);
+        redisTemplate.expire(email, refreshTokenValidityTime, TimeUnit.SECONDS);
     }
 
     public Boolean delete(final String email) {
