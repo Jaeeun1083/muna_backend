@@ -176,7 +176,7 @@ public class ProductController {
      * 상품에 대한 내 Like, Request 조회
      * */
     @ApiOperation(value = "상품에 대한 내 정보 조회")
-    @PostMapping("/{productCode}/me")
+    @GetMapping("/{productCode}/me")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -203,6 +203,17 @@ public class ProductController {
                         .message("상품에 대한 내 정보 조회 성공").build());
     }
 
+    @ApiOperation(value = "상품 나눔 받은 내역 조회")
+    @GetMapping("/received/list")
+    public ResponseEntity<CommonResponse> getReceivedProductList(HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(productService.getReceivedProductList(email))
+                        .message("상품 나눔 받은 내역 조회 성공").build());
+    }
+
     /**
      * 상품 등록 내역 조회 API
      * */
@@ -221,20 +232,13 @@ public class ProductController {
                                     {
                                       "statusCode": 200,
                                       "data": {
-                                        "info": {
-                                          "productCount": 4,
-                                          "productCode": 45
-                                        },
-                                        "result": [
-                                          {
-                                            "productCode": 28,
-                                            "title": "string",
-                                            "thumbnail": "",
-                                            "reqCnt": 0,
-                                            "mcoin": 0,
-                                            "productStatus": false
-                                          },
-                                        ],
+                                        "productCode": 28,
+                                        "title": "string",
+                                        "thumbnail": "",
+                                        "category": "",
+                                        "reqCnt": 0,
+                                        "mcoin": 0,
+                                        "productStatus": false
                                       },
                                       "message": "상품 등록 내역 조회 성공"
                                     }""")))

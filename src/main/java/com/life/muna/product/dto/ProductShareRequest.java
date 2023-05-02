@@ -1,5 +1,6 @@
 package com.life.muna.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
@@ -8,7 +9,12 @@ import javax.validation.constraints.Size;
 
 @Getter
 public class ProductShareRequest {
-    @ApiModelProperty(hidden = true)
+
+    @JsonIgnore
+    private Long userCode;
+
+    @JsonIgnore
+//    @ApiModelProperty(hidden = true)
     private Long productCode;
 
     @ApiModelProperty(example = "나눔 요청 부탁드립니다.", required = true)
@@ -16,7 +22,8 @@ public class ProductShareRequest {
     @Size(max = 50, message = "요청 메시지는 50자 미만으로 작성해야합니다.")
     private String requestContent;
 
-    public void setProductCode(Long productCode) {
+    public void setRequestInfo(Long userCode, Long productCode) {
+        this.userCode = userCode;
         this.productCode = productCode;
     }
 

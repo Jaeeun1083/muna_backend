@@ -36,9 +36,11 @@ public class ReqProductService {
         return MAX_REQUEST - requested;
     }
 
-    public Boolean requestShareProduct(String emailFromToken, ProductShareRequest productShareRequest) {
-        Long productCode = productShareRequest.getProductCode();
+    public Boolean requestShareProduct(String emailFromToken, Long productCode, ProductShareRequest productShareRequest) {
+
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+        productShareRequest.setRequestInfo(userCode, productCode);
+
         Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
         if(findProductOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
         Product findProduct = findProductOptional.get();
@@ -83,8 +85,8 @@ public class ReqProductService {
             if (findProductOptional.isEmpty()) {
 
             } else {
-                int requestCount = reqProductMapper.findChatReqCountByProductCode(productCode);
-                ProductHistoryResponse response = ProductHistoryResponse.of(findProductOptional.get(), requestCount);
+                int reqCnt = reqProductMapper.findChatReqCountByProductCode(productCode);
+                ProductHistoryResponse response = ProductHistoryResponse.of(findProductOptional.get(), reqCnt);
                 productListResponses.add(response);
             }
         }

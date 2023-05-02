@@ -10,6 +10,7 @@ import com.life.muna.product.domain.Product;
 import com.life.muna.product.domain.ProductDetail;
 import com.life.muna.product.domain.enums.LocationRange;
 import com.life.muna.product.dto.*;
+import com.life.muna.product.mapper.ProductHistoryMapper;
 import com.life.muna.product.mapper.ProductMapper;
 import com.life.muna.product.mapper.ReqProductMapper;
 import com.life.muna.user.domain.User;
@@ -44,13 +45,15 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final ReqProductMapper reqProductMapper;
     private final ProductLikeMapper productLikeMapper;
+    private ProductHistoryMapper productHistoryMapper;
     private final UserMapper userMapper;
     private final LocationMapper locationMapper;
 
-    public ProductService(ProductMapper productMapper, ReqProductMapper reqProductMapper, ProductLikeMapper productLikeMapper, UserMapper userMapper, LocationMapper locationMapper, @Value("${image.upload-path}") String defaultPath) {
+    public ProductService(ProductMapper productMapper, ReqProductMapper reqProductMapper, ProductLikeMapper productLikeMapper, ProductHistoryMapper productHistoryMapper, UserMapper userMapper, LocationMapper locationMapper, @Value("${image.upload-path}") String defaultPath) {
         this.productMapper = productMapper;
         this.reqProductMapper = reqProductMapper;
         this.productLikeMapper = productLikeMapper;
+        this.productHistoryMapper = productHistoryMapper;
         this.userMapper = userMapper;
         this.locationMapper = locationMapper;
         this. defaultPath = defaultPath;
@@ -137,6 +140,17 @@ public class ProductService {
         return MyInfoOfProductResponse.setMyInformation(isRequested, isLiked);
     }
 
+    public List<ProductHistoryResponse> getReceivedProductList(String emailFromToken) {
+        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+
+        List<Product> productList = productHistoryMapper.findReceivedProductByUserCode(userCode);
+        List<ProductHistoryResponse> productHistoryResponses = new ArrayList<>();
+        for (Product product : productList) {
+            productHistoryResponses.add(ProductHistoryResponse.of(product));
+        }
+        return productHistoryResponses;
+    }
+
 //    public List<ProductRegiListResponse> getRegisteredProductList(Long userCode, int page) {
     public List<ProductHistoryResponse> getRegisteredProductList(String emailFromToken) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
@@ -145,8 +159,8 @@ public class ProductService {
         List<Product> productList = productMapper.findProductByUserCode(userCode);
         List<ProductHistoryResponse> productHistoryResponse = new ArrayList<>();
         for (Product product : productList) {
-            int requestCount = reqProductMapper.findChatReqCountByProductCode(product.getProductCode());
-            ProductHistoryResponse response = ProductHistoryResponse.of(product, requestCount);
+            int reqCnt = reqProductMapper.findChatReqCountByProductCode(product.getProductCode());
+            ProductHistoryResponse response = ProductHistoryResponse.of(product, reqCnt);
             productHistoryResponse.add(response);
         }
         return productHistoryResponse;

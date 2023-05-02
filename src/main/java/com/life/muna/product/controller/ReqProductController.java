@@ -92,10 +92,8 @@ public class ReqProductController {
         LOG.info("requestShareProduct email: " + email);
         LOG.info("requestShareProduct requestContent: " + productShareRequest.getRequestContent());
 
-        productShareRequest.setProductCode(productCode);
-
         Map<String, Boolean> data = new HashMap<String, Boolean>();
-        Boolean result = reqProductService.requestShareProduct(email, productShareRequest);
+        Boolean result = reqProductService.requestShareProduct(email, productCode, productShareRequest);
         data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
@@ -169,7 +167,6 @@ public class ReqProductController {
                                     }""")))
     public ResponseEntity<CommonResponse> getRequestedProduct(HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
-//        Long userCode = jwtTokenProvider.getUserCodeFromEmail(email);
 //
 //        Map<String, Object> data = new HashMap<>();
 //        if (maxProductCode == null || maxProductCode == 0) {

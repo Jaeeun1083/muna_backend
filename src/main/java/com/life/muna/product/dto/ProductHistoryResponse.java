@@ -11,27 +11,39 @@ public class ProductHistoryResponse {
     private String title;
     private byte[] thumbnail;
     private Category category;
-    private Integer requestCount;
+    private Integer reqCnt;
     private Integer mcoin;
     private boolean productStatus;
 
     @Builder
-    public ProductHistoryResponse(Long productCode, String title, byte[] thumbnail, Category category, Integer requestCount, Integer mcoin, boolean productStatus) {
+    public ProductHistoryResponse(Long productCode, String title, byte[] thumbnail, Category category, Integer reqCnt, Integer mcoin, boolean productStatus) {
         this.productCode = productCode;
         this.title = title;
         this.thumbnail = thumbnail;
         this.category = category;
-        this.requestCount = requestCount;
+        this.reqCnt = reqCnt;
         this.mcoin = mcoin;
         this.productStatus = productStatus;
     }
 
-    public static ProductHistoryResponse of(Product product, int requestCount) {
+    public static ProductHistoryResponse of(Product product, int reqCnt) {
         return ProductHistoryResponse.builder()
                 .productCode(product.getProductCode())
                 .title(product.getTitle())
                 .thumbnail(product.getThumbnail())
-                .requestCount(requestCount)
+                .category(product.getCategory())
+                .reqCnt(reqCnt)
+                .mcoin(product.getMcoin())
+                .productStatus(product.getProductStatus())
+                .build();
+    }
+
+    public static ProductHistoryResponse of(Product product) {
+        return ProductHistoryResponse.builder()
+                .productCode(product.getProductCode())
+                .title(product.getTitle())
+                .thumbnail(product.getThumbnail())
+                .category(product.getCategory())
                 .mcoin(product.getMcoin())
                 .productStatus(product.getProductStatus())
                 .build();
