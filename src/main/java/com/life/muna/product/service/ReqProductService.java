@@ -1,12 +1,11 @@
 package com.life.muna.product.service;
 
-import com.life.muna.auth.util.JwtTokenProvider;
 import com.life.muna.common.dto.MaxProductInfoResponse;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.product.domain.Product;
+import com.life.muna.product.dto.ProductHistoryResponse;
 import com.life.muna.product.dto.ProductShareRequest;
-import com.life.muna.product.dto.ReqProductListResponse;
 import com.life.muna.product.mapper.ProductMapper;
 import com.life.muna.product.mapper.ReqProductMapper;
 import com.life.muna.user.mapper.UserMapper;
@@ -21,13 +20,11 @@ public class ReqProductService {
     private static final int MAX_REQUEST = 5;
     private final static int PAGE_SIZE = 30;
     private final ProductMapper productMapper;
-    private final JwtTokenProvider jwtTokenProvider;
     private final ReqProductMapper reqProductMapper;
     private final UserMapper userMapper;
 
-    public ReqProductService(ProductMapper productMapper, JwtTokenProvider jwtTokenProvider, ReqProductMapper reqProductMapper, UserMapper userMapper) {
+    public ReqProductService(ProductMapper productMapper, ReqProductMapper reqProductMapper, UserMapper userMapper) {
         this.productMapper = productMapper;
-        this.jwtTokenProvider = jwtTokenProvider;
         this.reqProductMapper = reqProductMapper;
         this.userMapper = userMapper;
     }
@@ -76,22 +73,22 @@ public class ReqProductService {
         return requestChatResult != 0;
     }
 
-    public List<ReqProductListResponse> getRequestProductList(String emailFromToken) {
+    public List<ProductHistoryResponse> getRequestProductList(String emailFromToken) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
 //        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
         List<Long> productCodeList = reqProductMapper.findProductCodeByUserCode(userCode);
-        List<ReqProductListResponse> reqProductListResponses = new ArrayList<>();
+        List<ProductHistoryResponse> productListResponses = new ArrayList<>();
         for (long productCode: productCodeList) {
             Optional<Product> findProductOptional = productMapper.findProductByProductCode(productCode);
             if (findProductOptional.isEmpty()) {
 
             } else {
                 int requestCount = reqProductMapper.findChatReqCountByProductCode(productCode);
-                ReqProductListResponse response = ReqProductListResponse.of(findProductOptional.get(), requestCount);
-                reqProductListResponses.add(response);
+                ProductHistoryResponse response = ProductHistoryResponse.of(findProductOptional.get(), requestCount);
+                productListResponses.add(response);
             }
         }
-        return reqProductListResponses;
+        return productListResponses;
     }
 
     public MaxProductInfoResponse getMaxRequestProductInfo(Long userCode) {

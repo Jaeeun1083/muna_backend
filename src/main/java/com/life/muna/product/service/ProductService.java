@@ -138,18 +138,18 @@ public class ProductService {
     }
 
 //    public List<ProductRegiListResponse> getRegisteredProductList(Long userCode, int page) {
-    public List<ProductRegiListResponse> getRegisteredProductList(String emailFromToken) {
+    public List<ProductHistoryResponse> getRegisteredProductList(String emailFromToken) {
         Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
 
 //        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
         List<Product> productList = productMapper.findProductByUserCode(userCode);
-        List<ProductRegiListResponse> productRegiListResponses = new ArrayList<>();
+        List<ProductHistoryResponse> productHistoryResponse = new ArrayList<>();
         for (Product product : productList) {
             int requestCount = reqProductMapper.findChatReqCountByProductCode(product.getProductCode());
-            ProductRegiListResponse response = ProductRegiListResponse.of(product, requestCount);
-            productRegiListResponses.add(response);
+            ProductHistoryResponse response = ProductHistoryResponse.of(product, requestCount);
+            productHistoryResponse.add(response);
         }
-        return productRegiListResponses;
+        return productHistoryResponse;
     }
 
     public ReqReceivedResponse getReceivedReqOfProduct(String emailFromToken, Long productCode) {
@@ -182,7 +182,7 @@ public class ProductService {
                 });
 
         return ReqReceivedResponse.builder()
-                .product(ProductRegiListResponse.of(product, reqCnt))
+                .product(ProductHistoryResponse.of(product, reqCnt))
                 .reqUserProfileList(reqUserProfileList)
                 .build();
     }

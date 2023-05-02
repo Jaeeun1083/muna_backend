@@ -1,30 +1,33 @@
 package com.life.muna.product.dto;
 
 import com.life.muna.product.domain.Product;
+import com.life.muna.product.domain.enums.Category;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ProductRegiListResponse {
+public class ProductHistoryResponse {
     private Long productCode;
     private String title;
     private byte[] thumbnail;
+    private Category category;
     private Integer requestCount;
     private Integer mcoin;
     private boolean productStatus;
 
     @Builder
-    public ProductRegiListResponse(Long productCode, String title, byte[] thumbnail, Integer requestCount, Integer mcoin, boolean productStatus) {
+    public ProductHistoryResponse(Long productCode, String title, byte[] thumbnail, Category category, Integer requestCount, Integer mcoin, boolean productStatus) {
         this.productCode = productCode;
         this.title = title;
         this.thumbnail = thumbnail;
+        this.category = category;
         this.requestCount = requestCount;
         this.mcoin = mcoin;
         this.productStatus = productStatus;
     }
 
-    public static ProductRegiListResponse of(Product product, int requestCount) {
-        return ProductRegiListResponse.builder()
+    public static ProductHistoryResponse of(Product product, int requestCount) {
+        return ProductHistoryResponse.builder()
                 .productCode(product.getProductCode())
                 .title(product.getTitle())
                 .thumbnail(product.getThumbnail())
@@ -33,4 +36,5 @@ public class ProductRegiListResponse {
                 .productStatus(product.getProductStatus())
                 .build();
     }
+
 }
