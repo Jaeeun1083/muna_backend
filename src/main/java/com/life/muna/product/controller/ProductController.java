@@ -5,7 +5,6 @@ import com.life.muna.common.dto.CommonResponse;
 import com.life.muna.product.dto.ProductCreateRequest;
 import com.life.muna.product.dto.ProductListRequest;
 import com.life.muna.product.dto.ProductListResponse;
-import com.life.muna.product.dto.ProductRegiListResponse;
 import com.life.muna.product.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -112,11 +111,8 @@ public class ProductController {
     public ResponseEntity<CommonResponse> getProductList(@RequestBody @Valid ProductListRequest productListRequest, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
         Map<String, Object> data = new HashMap<>();
-        if (productListRequest.getMaxProductCode() == null || productListRequest.getMaxProductCode() == 0) {
-            data.put("info", productService.getMaxProductInfo());
-        } else {
-            data.put("info", null);
-        }
+
+        data.put("info", productService.getMaxProductInfo(productListRequest));
 
         List<ProductListResponse> result = productService.getProductList(email, productListRequest);
         data.put("result", result);

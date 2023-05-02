@@ -187,8 +187,11 @@ public class ProductService {
                 .build();
     }
 
-    public MaxProductInfoResponse getMaxProductInfo() {
-        return productMapper.findMaxProductInfo(PAGE_SIZE);
+    public MaxProductInfoResponse getMaxProductInfo(ProductListRequest productListRequest) {
+        if (productListRequest.getMaxProductCode() == null || productListRequest.getMaxProductCode() == 0) {
+            return productMapper.findMaxProductInfo(PAGE_SIZE);
+        }
+        return new MaxProductInfoResponse(0, 0L);
     }
 
     public MaxProductInfoResponse getMaxRegisteredProductInfo(Long userCode) {
