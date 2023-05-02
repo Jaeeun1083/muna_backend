@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.life.muna.product.mapper.ProductHistoryMapper">
+
+    <select id="findReceivedProductByUserCode" parameterType="Long" resultType="com.life.muna.product.domain.Product">
+        SELECT PRODUCT_CODE, USER_CODE, LOCATION_DONG_CD, CATEGORY, TITLE, THUMBNAIL, PRODUCT_STATUS, MCOIN, REQ_CNT, INSERT_DATE, UPDATE_DATE
+        FROM TB_PRODUCT
+        WHERE PRODUCT_CODE = (SELECT PRODUCT_CODE
+        FROM TB_PRODUCT_HIS
+        WHERE BUYER_CODE = #{userCode});
+    </select>
+
+</mapper>
