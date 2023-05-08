@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,7 +61,7 @@ public class ProductService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean createProduct(String emailFromToken, ProductCreateRequest productCreateRequest) {
+    public boolean createProduct(String emailFromToken, ProductCreateRequest productCreateRequest, List<MultipartFile> images) {
         User user =  userMapper.findUserByEmail(emailFromToken).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE));
         if (user.getLocationDongCd() == null) throw new BusinessException(ErrorCode.UNPROCESSABLE_USER_LOCATION);
         long userCode = user.getUserCode();
@@ -73,7 +74,7 @@ public class ProductService {
 
         String imageLink = String.format("/upload/U%07d/P%07d/",userCode, productCode);
 
-        int imageCount = productCreateRequest.getImages().size();
+        int imageCount = images.size();
         if (imageCount == 0) throw new BusinessException(ErrorCode.NO_IMAGES_TO_UPLOAD);
 
         String folderPath = String.format("%s/U%07d/P%07d/",defaultPath, userCode, productCode);
@@ -83,10 +84,10 @@ public class ProductService {
         }
 
         for (int i = 0; i < imageCount; i++) {
-            byte[] imageBytes = productCreateRequest.getImages().get(i);
+            MultipartFile image = images.get(i);
             String imagePath = String.format("%s%d.jpg", folderPath, i);
-            try (FileOutputStream fos = new FileOutputStream(imagePath)) {
-                fos.write(imageBytes);
+            try {
+                image.transferTo(new File(imagePath));
             } catch (IOException e) {
                 throw new BusinessException(ErrorCode.FAILED_TO_SAVE_IMAGE);
             }

@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -56,11 +57,13 @@ public class ProductController {
                                       }
                                       "message": "나눔 상품 등록 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> createProduct(@RequestBody @Valid ProductCreateRequest productCreateRequest, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> createProduct(@RequestPart(value="data") @Valid ProductCreateRequest productCreateRequest,
+                                                        @RequestPart(value="images", required=false) List<MultipartFile> images,
+                                                        HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
 
         Map<String, Boolean> data = new HashMap<>();
-        boolean result = productService.createProduct(email, productCreateRequest);
+        boolean result = productService.createProduct(email, productCreateRequest, images);
         data.put("result", result);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()

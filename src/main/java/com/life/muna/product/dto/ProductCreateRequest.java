@@ -28,7 +28,7 @@ public class ProductCreateRequest {
 
     private byte[] thumbnail;
 
-    private List<byte[]> images;
+//    private List<byte[]> images;
 
     @NotBlank(message = "나눔 상품설명은 필수 입력 값입니다.")
     private String content;
