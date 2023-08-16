@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.life.muna.user.mapper.TempKeyMapper">
+
+    <select id="findByPhone" parameterType="java.lang.String" resultType="com.life.muna.user.domain.TempKey">
+        SELECT *
+        FROM TB_USER_TEMPKEY
+        WHERE PHONE = #{phone};
+    </select>
+
+    <update id="updateTempKey" parameterType="com.life.muna.user.domain.TempKey">
+        UPDATE TB_USER_TEMPKEY
+        SET TEMP_KEY = #{tempKey}, ISSUED_CNT = #{issuedCnt}, VERIFIED = #{verified}, UPDATE_DATE = now()
+        WHERE PHONE = #{phone};
+    </update>
+
+    <insert id="save"  parameterType="com.life.muna.user.domain.TempKey">
+        INSERT INTO TB_USER_TEMPKEY (PHONE, TEMP_KEY, ISSUED_CNT, VERIFIED, INSERT_DATE, UPDATE_DATE)
+        VALUES (#{phone}, #{tempKey}, #{issuedCnt}, #{verified}, now(), now());
+    </insert>
+
+</mapper>
