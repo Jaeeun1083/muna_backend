@@ -1,5 +1,7 @@
-package com.life.muna.user.dto;
+package com.life.muna.user.dto.signIn;
 
+import com.life.muna.common.util.EnumValue;
+import com.life.muna.user.domain.enums.LoginType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
@@ -16,4 +18,9 @@ public class SignInRequest {
 
     @ApiModelProperty(example = "test1234!")
     private String password;
+
+    @ApiModelProperty(example = "EMAIL", required = true)
+    @EnumValue(enumClass = LoginType.class, message = "로그인 타입이 올바르지 않습니다.")
+    private String loginType;
+
 }

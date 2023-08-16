@@ -1,7 +1,7 @@
-package com.life.muna.product.dto;
+package com.life.muna.product.dto.receive;
 
 import com.life.muna.product.domain.enums.ChatStatus;
-import com.life.muna.user.dto.OtherUserProfile;
+import com.life.muna.user.dto.profile.OtherUserProfile;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.life.muna.user.dto;
+package com.life.muna.user.dto.profile;
 
 import lombok.Getter;
 

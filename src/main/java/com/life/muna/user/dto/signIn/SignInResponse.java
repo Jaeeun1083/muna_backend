@@ -1,4 +1,4 @@
-package com.life.muna.user.dto;
+package com.life.muna.user.dto.signIn;
 
 import com.life.muna.auth.dto.TokenResponse;
 import lombok.Builder;
@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Getter
 public class SignInResponse {
-    private final Long userCode;
+    private final long userCode;
     private final TokenResponse token;
 
     @Builder
-    public SignInResponse(Long userCode, TokenResponse tokenResponse) {
+    public SignInResponse(long userCode, TokenResponse tokenResponse) {
         this.userCode = userCode;
         this.token = tokenResponse;
     }

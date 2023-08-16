@@ -1,4 +1,4 @@
-package com.life.muna.user.dto;
+package com.life.muna.user.dto.signUp;
 
 import com.life.muna.auth.util.PasswordEncoder;
 import com.life.muna.common.util.EnumValue;
@@ -10,6 +10,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.Arrays;
 
 @Getter
 public class SignUpRequest {
@@ -49,7 +50,7 @@ public class SignUpRequest {
                 .password(passwordEncoder.encrypt(signUpRequest.getPassword()))
                 .nickname(signUpRequest.getNickname())
                 .loginType(LoginType.fromTypeName(signUpRequest.getLoginType()))
-                .userLevel(UserLevel.BASIC)
+                .userLevel(UserLevel.LV01)
                 .profileImage(signUpRequest.getProfileImage())
                 .phone(signUpRequest.getPhone())
                 .build();
@@ -57,6 +58,18 @@ public class SignUpRequest {
 
     public void setProfileImage(byte[] profileImage) {
         this.profileImage = profileImage;
+    }
+
+    @Override
+    public String toString() {
+        return "SignUp {" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", loginType='" + loginType + '\'' +
+                ", profileImage=" + Arrays.toString(profileImage) +
+                ", phone='" + phone + '\'' +
+                '}';
     }
 
 }
