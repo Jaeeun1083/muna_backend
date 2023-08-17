@@ -8,11 +8,15 @@ import com.life.muna.common.dto.CommonResponse;
 import com.life.muna.location.dto.update.LocationUpdateRequest;
 import com.life.muna.location.service.LocationService;
 import com.life.muna.user.dto.info.UserLevelResponse;
-import com.life.muna.user.dto.notice.FcmTokenRequest;
+import com.life.muna.user.dto.fcm.FcmTokenRequest;
+import com.life.muna.user.dto.modify.CheckPasswordRequest;
+import com.life.muna.user.dto.modify.ModifyPasswordRequest;
+import com.life.muna.user.dto.find.FindPasswordRequest;
 import com.life.muna.user.dto.signIn.SignInRequest;
 import com.life.muna.user.dto.signOut.SignOutRequest;
 import com.life.muna.user.dto.signUp.SignUpRequest;
 import com.life.muna.user.dto.reissue.ReissueRequest;
+import com.life.muna.user.dto.withdraw.WithDrawUserRequest;
 import com.life.muna.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +52,7 @@ public class UserController {
     /**
      * 이메일 중복 체크 API
      * */
+    @UnLock
     @ApiOperation(value = "이메일 중복 체크")
     @ApiResponse(
             responseCode = "200",
@@ -80,6 +85,7 @@ public class UserController {
     /**
      * 닉네임 중복 체크 API
      * */
+    @UnLock
     @ApiOperation(value = "닉네임 중복 체크")
     @ApiResponse(
             responseCode = "200",
@@ -241,8 +247,11 @@ public class UserController {
                         .message("access token 재발급 결과").build());
     }
 
+    /**
+     * 회원 등급 및 거래 내역 조회 API
+     * */
     @ApiOperation(value = "회원 등급 및 거래 내역 조회")
-    @PostMapping("/level")
+    @GetMapping("/level")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -289,9 +298,13 @@ public class UserController {
                                         {
                                           "statusCode": "200",
                                           "data": {
+                                            "userCode" : 0,
                                             "email" : "",
                                             "nickname" : ""
+                                            "userLevel" : "",
                                             "profileImage" : "",
+                                            "reqCnt" : 0,
+                                            "mcoin" : 0,
                                           },
                                           "message": "유저 정보 조회 성공"
                                         }""")))
@@ -367,6 +380,173 @@ public class UserController {
                         .statusCode(HttpStatus.OK.value())
                         .data(data)
                         .message("fcm 토큰 저장 성공") .build());
+    }
+
+    /**
+     * 비밀번호 일치 확인 API
+     * */
+    @ApiOperation(value = "비밀번호 일치 확인")
+    @PostMapping("/check/password")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "result": true
+                                      },
+                                      "message": "비밀번호가 일치합니다."
+                                    }""")))
+    public ResponseEntity<CommonResponse> checkPassword(@RequestBody @Valid CheckPasswordRequest checkPasswordRequest, HttpServletRequest request) {
+        LOG.info("uri : {}, data: {}", request.getRequestURI(), checkPasswordRequest.toString());
+        String email = (String) request.getAttribute("email");
+        Map<String, Boolean> data = new HashMap<String, Boolean>();
+        boolean result = userService.isSamePassword(email, checkPasswordRequest);
+        data.put("result", result);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(data)
+                        .message(result ? "비밀번호가 일치합니다." : "비밀번호가 일치하지 않습니다.").build());
+    }
+
+    /**
+     * 비밀번호 변경 API
+     * */
+    @ApiOperation(value = "비밀번호 변경")
+    @PutMapping("/modify/password")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "result": true
+                                      },
+                                      "message": "비밀번호 변경 성공"
+                                    }""")))
+    public ResponseEntity<CommonResponse> modifyPassword(@RequestBody @Valid ModifyPasswordRequest modifyPasswordRequest, HttpServletRequest request) {
+        LOG.info("uri : {}, data: {}", request.getRequestURI(), modifyPasswordRequest.toString());
+        String email = (String) request.getAttribute("email");
+        Map<String, Boolean> data = new HashMap<String, Boolean>();
+        boolean result = userService.modifyPassword(email, modifyPasswordRequest);
+        data.put("result", result);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(data)
+                        .message(result ? "비밀번호 변경 성공" : "비밀번호 변경 실패").build());
+    }
+
+    /**
+     * 비밀번호 찾기 API
+     * */
+    @UnLock
+    @ApiOperation(value = "비밀번호 찾기")
+    @PostMapping("/find/password")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "result": ""
+                                      },
+                                      "message": "비밀번호 찾기 성공"
+                                    }""")))
+    public ResponseEntity<CommonResponse<Object>> findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest, HttpServletRequest request) {
+        LOG.info("uri : {}, data: {}", request.getRequestURI(), findPasswordRequest.toString());
+        Map<String, String> data = new HashMap<>();
+        String result = userService.resetPassword(findPasswordRequest);
+        data.put("result", result);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(data)
+                        .message("비밀번호 찾기 성공").build());
+    }
+
+    /**
+     * 아이디 찾기 API
+     * */
+    @UnLock
+    @ApiOperation(value = "이메일 찾기")
+    @GetMapping("/find/email")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "email": "*@p.p"
+                                      },
+                                      "message": "아이디 찾기 성공"
+                                    }""")))
+    public ResponseEntity<CommonResponse> findUserEmail(@RequestParam String phone) {
+        String email = userService.findUserEmail(phone);
+
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("email", email);
+
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(data)
+                        .message("아이디 찾기 성공").build());
+    }
+
+    /**
+     * 회원 삭제 API
+     * */
+    @ApiOperation(value = "회원 삭제")
+    @DeleteMapping("/withdraw")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "example",
+                            value = """
+                                    {
+                                      "statusCode": 200,
+                                      "data": {
+                                        "result": true
+                                      },
+                                      "message": "회원 삭제 성공"
+                                    }""")))
+    public ResponseEntity<CommonResponse> withDrawUser(@RequestBody WithDrawUserRequest withDrawUserRequest, HttpServletRequest request) {
+        LOG.info("uri : {}, data: {}", request.getRequestURI(), withDrawUserRequest.toString());
+
+        String email = (String) request.getAttribute("email");
+        Map<String, Boolean> data = new HashMap<String, Boolean>();
+        boolean result = userService.withDrawUser(email, withDrawUserRequest);
+        data.put("result", result);
+        return ResponseEntity.ok()
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(data)
+                        .message("회원 삭제 성공").build());
     }
 
 }

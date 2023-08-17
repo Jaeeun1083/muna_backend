@@ -20,7 +20,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = extractor.extract(request);
-        Claims claims =  tokenProvider.validateToken(token);
+        Claims claims =  tokenProvider.validateAccessToken(token);
         String emailFromToken = claims.getSubject();
 
         request.setAttribute("email", emailFromToken);

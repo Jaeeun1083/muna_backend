@@ -22,9 +22,10 @@ public class AppConfig implements WebMvcConfigurer {
 
     private String[] excludePathPatterns() {
         return new String[]{
-                "/api/muna/v1/users/signUp", "/api/muna/v1/users/signIn"
+                 "/api/muna/v1/users/duplicate/email", "/api/muna/v1/users/duplicate/nickname"
+                ,"/api/muna/v1/users/signUp", "/api/muna/v1/users/signIn"
                 , "/api/muna/v1/users/signOut", "/api/muna/v1/users/reissue"
-                , "/api/muna/v1/users/email-duplicate", "/api/muna/v1/users/nickname-duplicate"
+                , "/api/muna/v1/users/find/password", "/api/muna/v1/users//find/email"
         };
     }
 

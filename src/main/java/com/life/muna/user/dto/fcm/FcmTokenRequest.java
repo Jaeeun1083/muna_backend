@@ -1,4 +1,4 @@
-package com.life.muna.user.dto.notice;
+package com.life.muna.user.dto.fcm;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

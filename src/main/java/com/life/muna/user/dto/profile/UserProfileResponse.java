@@ -1,5 +1,6 @@
 package com.life.muna.user.dto.profile;
 
+import com.life.muna.mcoin.domain.Mcoin;
 import com.life.muna.user.domain.User;
 import com.life.muna.user.domain.enums.UserLevel;
 import lombok.Builder;
@@ -9,26 +10,33 @@ import lombok.Getter;
 public class UserProfileResponse {
     private long userCode;
     private String email;
-    private UserLevel userLevel;
     private String nickname;
+    private UserLevel userLevel;
     private byte[] profileImage;
+    private int reqCnt;
+    private int mcoin;
 
     @Builder
-    private UserProfileResponse(long userCode, String email, UserLevel userLevel, String nickname, byte[] profileImage) {
+    public UserProfileResponse(long userCode, String email, String nickname, UserLevel userLevel, byte[] profileImage, int reqCnt, int mcoin) {
         this.userCode = userCode;
         this.email = email;
-        this.userLevel = userLevel;
         this.nickname = nickname;
+        this.userLevel = userLevel;
         this.profileImage = profileImage;
+        this.reqCnt = reqCnt;
+        this.mcoin = mcoin;
     }
 
-    public static UserProfileResponse of(User user) {
+    public static UserProfileResponse of(User user, Mcoin mcoin) {
         return UserProfileResponse.builder()
                 .userCode(user.getUserCode())
                 .email(user.getEmail())
-                .userLevel(user.getUserLevel())
                 .nickname(user.getNickname())
+                .userLevel(user.getUserLevel())
                 .profileImage(user.getProfileImage())
+                .reqCnt(user.getReqCnt() + user.getCashedReqCnt())
+                .mcoin(mcoin.getTotalAmount())
                 .build();
     }
+
 }

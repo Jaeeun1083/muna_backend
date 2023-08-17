@@ -21,6 +21,11 @@
         FROM TB_USER WHERE EMAIL = #{email};
     </select>
 
+    <select id="findByPhone" parameterType="java.lang.String" resultType="com.life.muna.user.domain.User">
+        SELECT *
+        FROM TB_USER WHERE PHONE = #{phone} AND USER_STATUS = 'AC';
+    </select>
+
     <select id="findByUserCode" parameterType="Long" resultType="com.life.muna.user.domain.User">
         SELECT *
         FROM TB_USER WHERE USER_CODE = #{userCode};

@@ -1,15 +1,15 @@
-package com.life.muna.product.dto;
+package com.life.muna.product.dto.detail;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class MyInfoOfProductResponse {
-    private Boolean isRequested;
-    private Boolean isLiked;
+    private boolean isRequested;
+    private boolean isLiked;
 
     @Builder
-    private MyInfoOfProductResponse(Boolean isRequested, Boolean isLiked) {
+    private MyInfoOfProductResponse(boolean isRequested, boolean isLiked) {
         this.isRequested = isRequested;
         this.isLiked = isLiked;
     }

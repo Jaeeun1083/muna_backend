@@ -14,6 +14,7 @@ public interface UserMapper {
     boolean existsByEmail(@Param("email") String email);
     boolean existsByPhone(@Param("phone") String phone);
     Optional<User> findByEmail(@Param("email") String userEmail);
+    Optional<User> findByPhone(@Param("phone") String phone);
     Optional<User> findByUserCode(@Param("userCode") Long userCode);
     int saveLocation(@Param("userCode") Long userCode, @Param("locationDongCd") Long locationDongCd);
     int saveReqCnt(@Param("userCode") Long userCode, @Param("reqCnt") int reqCnt, @Param("cashedReqCnt") int cashedReqCnt);
