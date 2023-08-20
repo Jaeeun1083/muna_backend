@@ -498,15 +498,18 @@ public class UserController {
                                     {
                                       "statusCode": 200,
                                       "data": {
+                                        "result": true,
                                         "email": "*@p.p"
                                       },
                                       "message": "아이디 찾기 성공"
                                     }""")))
     public ResponseEntity<CommonResponse> findUserEmail(@RequestParam String phone) {
         String email = userService.findUserEmail(phone);
-
-        Map<String, String> data = new HashMap<String, String>();
-        data.put("email", email);
+        boolean result;
+        result = !email.isEmpty();
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("email", email.isEmpty() ? "" : email);
+        data.put("result", result);
 
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()

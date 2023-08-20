@@ -218,8 +218,10 @@ public class UserService {
     public String findUserEmail(String phone) {
         User findUser = userMapper.findByPhone(phone)
                 .filter(user -> !user.getUserStatus().equals(UserStatus.WD))
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-
+                .orElse(null);
+        if (findUser == null) {
+            return null;
+        }
         // 마스킹하여 리턴
         return MaskingUtil.getMaskedEmail(findUser.getEmail());
     }
