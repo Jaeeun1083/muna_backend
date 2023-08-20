@@ -8,19 +8,16 @@
         FROM TB_PRODUCT
     </select>
 
-    <select id="findMaxRegisteredProductInfo" resultType="com.life.muna.common.dto.MaxProductInfoResponse">
-        SELECT CEIL (count(*) / #{pageSize}), MAX(PRODUCT_CODE)
-        FROM TB_PRODUCT
-        WHERE USER_CODE = #{userCode}
-    </select>
-
-    <select id="findProductList" parameterType="com.life.muna.product.dto.ProductListRequest" resultType="com.life.muna.product.dto.ProductListResponse">
-        SELECT p.PRODUCT_CODE, CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM, ' ', tl.LOCATION_DONG_SUB_NM),
+    <select id="findProductList" parameterType="com.life.muna.product.dto.list.ProductListRequest" resultType="com.life.muna.product.dto.list.ProductListResponse">
+        SELECT p.USER_CODE, p.PRODUCT_CODE, CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM, ' ', tl.LOCATION_DONG_SUB_NM),
         p.CATEGORY,  p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE
         FROM TB_PRODUCT p
-        JOIN TB_LOCATION_TEMP tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
+        JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
         WHERE 1=1
-        <if test="maxProductCode &gt; 0">
+        AND p.USER_CODE NOT IN (SELECT BLOCKED_USER_CODE
+        FROM TB_BLOCKED b
+        WHERE b.USER_CODE = #{userCode})
+        <if test="maxProductCode > 0">
             AND PRODUCT_CODE &lt;= #{maxProductCode}
         </if>
         <if test="locationRange == 'L001' or locationRange == 'L002'">
@@ -35,11 +32,14 @@
         <if test="searchKeyword != null">
             AND p.TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
         </if>
-        <if test="productStatus == true">
-            AND p.PRODUCT_STATUS = #{productStatus}
+        <if test="productStatus">
+            AND p.PRODUCT_STATUS IN ('AVL')
+        </if>
+        <if test="!productStatus">
+            AND p.PRODUCT_STATUS IN ('AVL', 'COMP')
         </if>
         <if test="mcoinSort != null">
-            ORDER BY p.UPDATE_DATE DESC, p.MCOIN ${mcoinSort ? 'ASC' : 'DESC'}
+            ORDER BY p.MCOIN ${mcoinSort ? 'ASC' : 'DESC'}
         </if>
         <if test="mcoinSort == null">
             ORDER BY p.UPDATE_DATE DESC
@@ -59,13 +59,13 @@
         WHERE USER_CODE = #{userCode}
     </select>
 
-    <select id="findProductDetailByProductCode" parameterType="Long" resultType="com.life.muna.product.dto.ProductDetailResponse">
+    <select id="findProductDetailByProductCode" parameterType="Long" resultType="com.life.muna.product.dto.detail.ProductDetailResponse">
         SELECT d.PRODUCT_CODE, d.CONTENT, d.IMAGE_LINK, d.IMAGE_CNT, d.LIKES, d.VIEWS,
                CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM), p.CATEGORY, p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE,
                p.USER_CODE
         FROM TB_PRODUCT p
                  JOIN TB_PRODUCT_DETAIL d ON p.PRODUCT_CODE = d.PRODUCT_CODE
-                 JOIN TB_LOCATION_TEMP tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
+                 JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD
         WHERE p.PRODUCT_CODE = #{productCode}
     </select>
 
@@ -87,12 +87,20 @@
         WHERE PRODUCT_CODE = #{productCode}
     </update>
 
-    <insert id="saveProductDetail" parameterType="com.life.muna.product.domain.ProductDetail">
-        INSERT INTO TB_PRODUCT_DETAIL (PRODUCT_CODE, USER_CODE, CONTENT, IMAGE_LINK, IMAGE_CNT, INSERT_DATE, UPDATE_DATE)
-        VALUES (#{productCode}, #{userCode}, #{content}, #{imageLink}, #{imageCnt}, #{insertDate}, #{updateDate})
-    </insert>
+    <update id="updateDate">
+        UPDATE TB_PRODUCT p
+            JOIN TB_PRODUCT_DETAIL pd ON p.PRODUCT_CODE = pd.PRODUCT_CODE
+        SET p.UPDATE_DATE = now(), pd.UPDATE_DATE = now()
+        WHERE p.PRODUCT_CODE = #{productCode};
+    </update>
 
-    <insert id="save" parameterType="com.life.muna.product.domain.Product">
+    <update id="updateProductStatus">
+        UPDATE TB_PRODUCT
+        SET PRODUCT_STATUS = #{productStatus}
+        WHERE PRODUCT_CODE = #{productCode}
+    </update>
+
+    <insert id="saveProduct" parameterType="com.life.muna.product.domain.Product">
         INSERT INTO TB_PRODUCT (USER_CODE, LOCATION_DONG_CD, CATEGORY, TITLE, THUMBNAIL, PRODUCT_STATUS, MCOIN, INSERT_DATE, UPDATE_DATE)
         VALUES (#{userCode}, #{locationDongCd}, #{category}, #{title}, #{thumbnail}, #{productStatus}, #{mcoin}, #{insertDate}, #{updateDate})
         <selectKey keyProperty="productCode" resultType="Long" order="AFTER">
@@ -100,4 +108,8 @@
         </selectKey>
     </insert>
 
+    <insert id="saveProductDetail" parameterType="com.life.muna.product.domain.ProductDetail">
+        INSERT INTO TB_PRODUCT_DETAIL (PRODUCT_CODE, USER_CODE, CONTENT, IMAGE_LINK, IMAGE_CNT, INSERT_DATE, UPDATE_DATE)
+        VALUES (#{productCode}, #{userCode}, #{content}, #{imageLink}, #{imageCnt}, #{insertDate}, #{updateDate})
+    </insert>
 </mapper>

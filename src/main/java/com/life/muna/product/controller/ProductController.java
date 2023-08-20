@@ -1,10 +1,12 @@
 package com.life.muna.product.controller;
 
 import com.life.muna.auth.util.JwtTokenProvider;
+import com.life.muna.chat.domain.ChatRoom;
+import com.life.muna.chat.domain.enums.ChatStatus;
 import com.life.muna.common.dto.CommonResponse;
-import com.life.muna.product.dto.ProductCreateRequest;
-import com.life.muna.product.dto.ProductListRequest;
-import com.life.muna.product.dto.ProductListResponse;
+import com.life.muna.product.dto.create.ProductCreateRequest;
+import com.life.muna.product.dto.list.ProductListRequest;
+import com.life.muna.product.dto.list.ProductListResponse;
 import com.life.muna.product.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,9 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.util.*;
 
 @Api(tags = "상품 API 정보 제공")
 @RequiredArgsConstructor
@@ -34,7 +35,6 @@ import java.util.Map;
 public class ProductController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final ProductService productService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 나눔 상품 등록 API
@@ -53,18 +53,19 @@ public class ProductController {
                                     {
                                       "statusCode": 200,
                                       "data": {
-                                        "result": true,
+                                        "productCode": 1,
                                       }
                                       "message": "나눔 상품 등록 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> createProduct(@RequestPart(value="data") @Valid ProductCreateRequest productCreateRequest,
+    public ResponseEntity<CommonResponse> createProduct(@Valid @RequestPart(value="data") ProductCreateRequest productCreateRequest,
+                                                        @RequestPart(value="thumbnail") MultipartFile thumbnail,
                                                         @RequestPart(value="images", required=false) List<MultipartFile> images,
                                                         HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
 
-        Map<String, Boolean> data = new HashMap<>();
-        boolean result = productService.createProduct(email, productCreateRequest, images);
-        data.put("result", result);
+        Map<String, Long> data = new HashMap<>();
+        Long productCode = productService.createProduct(email, productCreateRequest, thumbnail, images);
+        data.put("productCode", productCode);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
@@ -91,8 +92,8 @@ public class ProductController {
                                       "statusCode": 200,
                                       "data": {
                                         "info": {
-                                          "productCount": 4,
-                                          "productCode": 45
+                                          "maxPage": 4,
+                                          "maxCode": 45
                                         },
                                         "result": [
                                           {
@@ -206,28 +207,12 @@ public class ProductController {
                         .message("상품에 대한 내 정보 조회 성공").build());
     }
 
-    @ApiOperation(value = "상품 나눔 받은 내역 조회")
-    @GetMapping("/received/list")
-    public ResponseEntity<CommonResponse> getReceivedProductList(HttpServletRequest request) {
-        String email = (String) request.getAttribute("email");
-        return ResponseEntity.ok()
-                .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
-                        .data(productService.getReceivedProductList(email))
-                        .message("상품 나눔 받은 내역 조회 성공").build());
-    }
-
-    /**
-     * 상품 등록 내역 조회 API
-     * */
-    @Transactional
-    @ApiOperation(value = "상품 등록 내역 조회")
-    @GetMapping("/register/list")
+    @ApiOperation(value = "나눔 삭제")
+    @PostMapping("/withdraw")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
             content = @Content(
-                    mediaType = "application/json",
                     schema = @Schema(implementation = CommonResponse.class),
                     examples = @ExampleObject(
                             name = "example",
@@ -235,42 +220,25 @@ public class ProductController {
                                     {
                                       "statusCode": 200,
                                       "data": {
-                                        "productCode": 28,
-                                        "title": "string",
-                                        "thumbnail": "",
-                                        "category": "",
-                                        "reqCnt": 0,
-                                        "mcoin": 0,
-                                        "productStatus": false
+                                        "result": true
                                       },
-                                      "message": "상품 등록 내역 조회 성공"
+                                      "message": "나눔 삭제 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getRegisteredProductList(HttpServletRequest request) {
-//    public ResponseEntity<CommonResponse> getRegisteredProductList(@RequestParam int page, Long maxProductCode, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> withDrawProduct(@RequestBody Long productCode, HttpServletRequest request) {
+        LOG.info("uri : {}, data: {}", request.getRequestURI(), "productCode : "  + productCode);
         String email = (String) request.getAttribute("email");
-//        Long userCode = jwtTokenProvider.getUserCodeFromEmail(email);
-
-//        Map<String, Object> data = new HashMap<>();
-//        if (maxProductCode == null || maxProductCode == 0) {
-//            data.put("info", productService.getMaxRegisteredProductInfo(userCode));
-//        } else {
-//            data.put("info", null);
-//        }
-//        List<ProductRegiListResponse> result = productService.getRegisteredProductList(userCode, page);
-//        data.put("result", result);
-
+        Map<String, Boolean> data = new HashMap<>();
+        boolean result = productService.withDrawProduct(email, productCode);
+        data.put("result", true);
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(productService.getRegisteredProductList(email))
-                        .message("상품 등록 내역 조회 성공").build());
+                        .data(data)
+                        .message("나눔 삭제 성공").build());
     }
 
-    /**
-     * 올린 상품에 대한 나눔 요청 리스트 조회 API
-     * */
-    @ApiOperation(value = "올린 상품에 대한 나눔 요청 조회")
-    @GetMapping("/{productCode}/req-received")
+    @ApiOperation(value = "상품 끌어올리기")
+    @PostMapping("/lift-up")
     @ApiResponse(
             responseCode = "200",
             description = "Successful operation",
@@ -283,35 +251,26 @@ public class ProductController {
                                     {
                                       "statusCode": 200,
                                       "data": {
-                                        "product": {
-                                          "productCode": 1,
-                                          "title": "타이틀1",
-                                          "thumbnail": "섬네일1",
-                                          "reqCnt": 0,
-                                          "mcoin": 1,
-                                          "productStatus": true,
-                                        },
-                                        "reqUserProfile": [
-                                          {
-                                            "userNickname": "마루도키",
-                                            "userProfileImage": byte[],
-                                            "location": "서울특별시 은평구 신사1동",
-                                            "reqContent": "나눔 요청1",
-                                            "chatStatus": "REQ",
-                                            "insertDate": "2023-04-07 10:44:33",
-                                            "updateDate": "2023-04-07 10:44:33",
-                                          },
-                                        ],
+                                        "result": true
                                       }
-                                      "message": "상품에 대한 나눔 요청 조회"
+                                      "message": "상품 끌어올리기 성공"
                                     }""")))
-    public ResponseEntity<CommonResponse> getReceivedReqOfProduct(@PathVariable Long productCode, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse> liftUpProduct(@RequestBody Long productCode, HttpServletRequest request) {
+        LOG.info("uri : {}, data: {}", request.getRequestURI(), "productCode : "  + productCode);
         String email = (String) request.getAttribute("email");
+        Map<String, Boolean> data = new HashMap<>();
+        long result = productService.liftUpProduct(email, productCode);
+        data.put("result", result == 0L);
+
+        Duration duration = Duration.ofSeconds(result);
+        long days = duration.toDays();
+        long hours = duration.toHours() % 24;
+
         return ResponseEntity.ok()
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(productService.getReceivedReqOfProduct(email, productCode))
-                        .message("상품에 대한 나눔 요청 조회").build());
+                        .data(data)
+                        .message(result == 0L ? "상품 끌어올리기 성공" : days + "일 " + hours + "시간 후 끌어올리기가 가능합니다.").build());
     }
 
 }

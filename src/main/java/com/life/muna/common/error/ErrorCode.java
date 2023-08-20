@@ -51,6 +51,11 @@ public enum ErrorCode {
     NOT_FOUND_RECEIVER(3004, "상대방을 조회할 수 없습니다."),
     CANNOT_SEARCH_OTHER_PRODUCT(3004, "다른 사람의 상품에 관해서는 조회할 수 없습니다."),
     NO_AUTHENTICATION_PRODUCT(3005, "해당 요청에 대한 권한이 없습니다."),
+    FAILED_TO_CREATE_PRODUCT(3006, "나눔 상품을 등록 하는데 실패 하였습니다. 잠시 후 다시 시도해주세요."),
+    NO_IMAGES_TO_UPLOAD(3007, "나눔 상품을 등록하기 위해서는 적어도 하나의 이미지가 필요합니다."),
+    FAILED_TO_DELETE_DIRECTORY(3008, "이미지 저장에 실패하였습니다. 잠시 후 다시 시도해주세요."),
+    FAILED_TO_CREATE_DIRECTORY(3009, "이미지 저장에 실패하였습니다. 잠시 후 다시 시도해주세요."),
+    FAILED_TO_SAVE_IMAGE(3010, "이미지 저장에 실패하였습니다. 잠시 후 다시 시도해주세요."),
 
     /**
      * REQ PRODUCT ERROR CODE

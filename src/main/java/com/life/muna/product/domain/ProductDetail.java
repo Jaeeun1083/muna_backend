@@ -3,6 +3,7 @@ package com.life.muna.product.domain;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -14,11 +15,11 @@ public class ProductDetail {
     private Integer imageCnt;
     private Integer likes;
     private Integer views;
-    private Date insertDate;
-    private Date updateDate;
+    private LocalDateTime insertDate;
+    private LocalDateTime updateDate;
 
     @Builder
-    public ProductDetail(Long productCode, Long userCode, String content, String imageLink, Integer imageCnt, Integer likes, Integer views, Date insertDate, Date updateDate) {
+    public ProductDetail(Long productCode, Long userCode, String content, String imageLink, Integer imageCnt, Integer likes, Integer views, LocalDateTime insertDate, LocalDateTime updateDate) {
         this.productCode = productCode;
         this.userCode = userCode;
         this.content = content;
