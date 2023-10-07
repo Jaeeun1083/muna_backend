@@ -29,8 +29,7 @@ public class ImageUtil {
     }
 
     public static byte[] resizeThumbnail(byte[] fileBytes) {
-        try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes);
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(fileBytes)) {
             BufferedImage image = ImageIO.read(inputStream);
             return resizeThumbnail(image);
         } catch (IOException e) {
@@ -69,17 +68,11 @@ public class ImageUtil {
     }
 
     private static byte[] getBytes(BufferedImage image) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             ImageIO.write(image, "jpg", outputStream);
             return outputStream.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            try {
-                outputStream.close();
-            } catch (IOException e) {
-            }
         }
     }
 
