@@ -1,7 +1,8 @@
-package com.life.muna.product.dto;
+package com.life.muna.product.dto.history;
 
 import com.life.muna.product.domain.Product;
 import com.life.muna.product.domain.enums.Category;
+import com.life.muna.product.domain.enums.ProductStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,10 +14,10 @@ public class ProductHistoryResponse {
     private Category category;
     private Integer reqCnt;
     private Integer mcoin;
-    private boolean productStatus;
+    private ProductStatus productStatus;
 
     @Builder
-    public ProductHistoryResponse(Long productCode, String title, byte[] thumbnail, Category category, Integer reqCnt, Integer mcoin, boolean productStatus) {
+    public ProductHistoryResponse(Long productCode, String title, byte[] thumbnail, Category category, Integer reqCnt, Integer mcoin, ProductStatus productStatus) {
         this.productCode = productCode;
         this.title = title;
         this.thumbnail = thumbnail;
