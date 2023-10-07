@@ -3,8 +3,8 @@ package com.life.muna.location.service;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
 import com.life.muna.location.domain.Location;
-import com.life.muna.location.dto.LocationUpdateRequest;
-import com.life.muna.location.dto.LocationUpdateResponse;
+import com.life.muna.location.dto.update.LocationUpdateRequest;
+import com.life.muna.location.dto.update.LocationUpdateResponse;
 import com.life.muna.location.mapper.LocationMapper;
 import com.life.muna.user.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Optional;
+
+import static com.life.muna.common.error.ErrorCode.NOT_FOUND_USER;
 
 @Service
 public class LocationService {
@@ -31,7 +33,8 @@ public class LocationService {
     }
 
     public LocationUpdateResponse updateLocation (String emailFromToken, LocationUpdateRequest locationUpdateRequest) {
-        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+        Long userCode = userMapper.findByEmail(emailFromToken)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_USER)).getUserCode();
 //        validateEmailFromTokenAndUserCode(emailFromToken, locationUpdateRequest.getUserCode());
         Location location = findLocation(locationUpdateRequest.getLocation());
         LOG.info("Update Location user : {}", emailFromToken);

@@ -1,4 +1,4 @@
-package com.life.muna.location.dto;
+package com.life.muna.location.dto.update;
 
 import com.life.muna.location.domain.Location;
 import lombok.Builder;
