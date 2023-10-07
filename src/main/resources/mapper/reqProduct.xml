@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.life.muna.product.mapper.ReqProductMapper">
+<mapper namespace="com.life.muna.productReq.mapper.ReqProductMapper">
 
     <select id="existsByUserCodeAndProductCode" parameterType="Long" resultType="boolean">
         SELECT COALESCE ((SELECT DISTINCT 1 FROM TB_PRODUCT_REQ WHERE USER_CODE=#{userCode} AND PRODUCT_CODE=#{productCode} LIMIT 1), 0)
@@ -14,7 +14,7 @@
         WHERE USER_CODE = #{userCode}
     </select>
 
-    <select id="findChatReqByProductCode" parameterType="Long" resultType="com.life.muna.product.domain.ReqProduct">
+    <select id="findChatReqByProductCode" parameterType="Long" resultType="com.life.muna.productReq.domain.ReqProduct">
         SELECT *
         FROM TB_PRODUCT_REQ
         WHERE PRODUCT_CODE = #{productCode}
@@ -46,7 +46,7 @@
           AND PRODUCT_CODE = #{productCode}
     </delete>
 
-    <insert id="save"  parameterType="com.life.muna.product.domain.ReqProduct">
+    <insert id="save"  parameterType="com.life.muna.productReq.domain.ReqProduct">
         INSERT INTO TB_PRODUCT_REQ (PRODUCT_CODE, USER_CODE, REQ_CONTENT, INSERT_DATE, UPDATE_DATE)
         VALUES ( #{productCode}, #{userCode}, #{requestContent}, now(), now());
     </insert>
