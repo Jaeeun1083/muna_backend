@@ -50,9 +50,9 @@ public class JwtTokenProvider {
     }
 
     public AccessToken createAccessToken(String email, RefreshToken refreshToken) {
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(email);
-        if(optionalRefreshToken.isEmpty()) throw new BusinessException(INVALID_AUTH_TOKEN);
-        if(!optionalRefreshToken.get().getRefreshToken().equals(refreshToken.getRefreshToken())) throw new BusinessException(INVALID_AUTH_TOKEN);
+        RefreshToken storedRefreshToken = refreshTokenRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(INVALID_REFRESH_TOKEN));
+        if(!storedRefreshToken.getRefreshToken().equals(refreshToken.getRefreshToken())) throw new BusinessException(INVALID_REFRESH_TOKEN);
 //                .orElseThrow(new BusinessException(INVALID_PROVIDER));
         return new AccessToken(createToken(email, accessTokenValidityTime));
     }
@@ -69,7 +69,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Claims validateToken(String token) {
+    public Claims getClaimFromToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -78,21 +78,32 @@ public class JwtTokenProvider {
                     .getBody();
             String email = claims.getSubject();
 
-            if(refreshTokenRepository.findByEmail(email).isEmpty()) throw new BusinessException(INVALID_AUTH_TOKEN);
+            if(refreshTokenRepository.findByEmail(email).isEmpty()) throw new BusinessException(INVALID_ACCESS_TOKEN);
             return claims;
         } catch(ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
             e.printStackTrace();
-            throw new BusinessException(INVALID_AUTH_TOKEN);
+            throw new BusinessException(INVALID_ACCESS_TOKEN);
         }
     }
 
     public Long getUserCodeFromEmail(String emailFromToken) {
-        return userMapper.findUserCodeByEmail(emailFromToken);
+        return userMapper.findByEmail(emailFromToken)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_USER)).getUserCode();
     }
 
+    public String validAndGetEmailFromToken(String token) {
+        Claims claims = getClaimFromToken(token);
+        String email = claims.getSubject();
+
+        if (refreshTokenRepository.findByEmail(email).isEmpty()) {
+            throw new BusinessException(INVALID_REFRESH_TOKEN);
+        }
+        return email;
+    }
+
+
     public void validateEmailFromTokenAndUserCode(String emailFromToken, Long userCode) {
-        Long findUserCode = userMapper.findUserCodeByEmail(emailFromToken);
-        if (findUserCode == null) throw new BusinessException(ErrorCode.NOT_FOUND_BY_USER_CODE);
+        Long findUserCode = getUserCodeFromEmail(emailFromToken);
         if (!findUserCode.equals(userCode)) throw new BusinessException(ErrorCode.MISMATCH_TOKEN_USER_CODE);
     }
 
