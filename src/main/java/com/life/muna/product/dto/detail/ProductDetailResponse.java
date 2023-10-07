@@ -1,43 +1,40 @@
 package com.life.muna.product.dto.detail;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.life.muna.product.domain.enums.ProductStatus;
 import com.life.muna.user.domain.User;
-import com.life.muna.user.domain.enums.UserLevel;
 import com.life.muna.user.dto.profile.OtherUserProfile;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import static com.life.muna.common.util.TimeConverter.convert;
+import static com.life.muna.common.util.TimeConverter.convertDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductDetailResponse extends OtherUserProfile {
-    private Long productCode;
+    private long productCode;
+    private long userCode;
     private String content;
     private String imageLink;
-    private Integer imageCnt;
-    private Integer likes;
-    private Integer views;
+    private int imageCnt;
+    private int likes;
+    private int views;
     private String location;
     private String category;
     private String title;
     private String thumbnail;
     private ProductStatus productStatus;
-    private Integer mcoin;
-    private Integer reqCnt;
+    private int mcoin;
+    private int reqCnt;
     private String insertDate;
     private String updateDate;
-    @JsonIgnore
-    private Long userCode;
     private Boolean isMyProduct;
 
-    private ProductDetailResponse(Long productCode, String content, String imageLink, Integer imageCnt, Integer likes, Integer views, String location, String category, String title, String thumbnail, ProductStatus productStatus, Integer mcoin, Integer reqCnt, Date insertDate, Date updateDate, Long userCode) {
+    private ProductDetailResponse(long productCode, long userCode, String content, String imageLink, int imageCnt, int likes, int views, String location, String category, String title, String thumbnail, ProductStatus productStatus, int mcoin, int reqCnt, LocalDateTime insertDate, LocalDateTime updateDate) {
         this.productCode = productCode;
+        this.userCode = userCode;
         this.content = content;
         this.imageLink = imageLink;
         this.imageCnt = imageCnt;
@@ -50,9 +47,8 @@ public class ProductDetailResponse extends OtherUserProfile {
         this.productStatus = productStatus;
         this.mcoin = mcoin;
         this.reqCnt = reqCnt;
-        this.insertDate = convert(insertDate);
-        this.updateDate = convert(insertDate);
-        this.userCode = userCode;
+        this.insertDate = convertDate(insertDate);
+        this.updateDate = convertDate(updateDate);
     }
 
     public void setSellerData(User user, boolean isMe) {

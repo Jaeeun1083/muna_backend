@@ -1,4 +1,4 @@
-package com.life.muna.product.dto;
+package com.life.muna.product.dto.list;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.life.muna.common.util.EnumValue;

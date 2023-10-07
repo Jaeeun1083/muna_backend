@@ -131,7 +131,6 @@ public class ProductService {
             setLocationCodeByRange(user.getLocationDongCd(), productListRequest);
         }
 
-
         productListRequest.setPageInfo(PAGE_SIZE);
         productList = productMapper.findProductList(productListRequest);
         return productList;
@@ -160,7 +159,7 @@ public class ProductService {
         Long userCode = userMapper.findByEmail(emailFromToken)
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_USER)).getUserCode();
 
-        boolean isRequested = reqProductMapper.existsByUserCodeAndProductCode(userCode, productCode);
+        boolean isRequested = reqProductMapper.existsByRequesterCodeAndProductCode(userCode, productCode);
         boolean isLiked = productLikeMapper.existsByUserCodeAndProductCode(userCode, productCode);
         return MyInfoOfProductResponse.setMyInformation(isRequested, isLiked);
     }

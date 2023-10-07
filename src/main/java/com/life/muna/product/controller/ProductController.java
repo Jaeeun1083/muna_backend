@@ -1,8 +1,5 @@
 package com.life.muna.product.controller;
 
-import com.life.muna.auth.util.JwtTokenProvider;
-import com.life.muna.chat.domain.ChatRoom;
-import com.life.muna.chat.domain.enums.ChatStatus;
 import com.life.muna.common.dto.CommonResponse;
 import com.life.muna.product.dto.create.ProductCreateRequest;
 import com.life.muna.product.dto.list.ProductListRequest;

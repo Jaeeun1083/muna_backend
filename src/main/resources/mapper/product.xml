@@ -60,9 +60,8 @@
     </select>
 
     <select id="findProductDetailByProductCode" parameterType="Long" resultType="com.life.muna.product.dto.detail.ProductDetailResponse">
-        SELECT d.PRODUCT_CODE, d.CONTENT, d.IMAGE_LINK, d.IMAGE_CNT, d.LIKES, d.VIEWS,
+        SELECT d.PRODUCT_CODE, p.USER_CODE, d.CONTENT, d.IMAGE_LINK, d.IMAGE_CNT, d.LIKES, d.VIEWS,
                CONCAT(tl.LOCATION_SI_NM, ' ' , tl.LOCATION_GU_NM, ' ' , tl.LOCATION_DONG_NM), p.CATEGORY, p.TITLE, p.THUMBNAIL, p.PRODUCT_STATUS, p.MCOIN, p.REQ_CNT, p.INSERT_DATE, p.UPDATE_DATE,
-               p.USER_CODE
         FROM TB_PRODUCT p
                  JOIN TB_PRODUCT_DETAIL d ON p.PRODUCT_CODE = d.PRODUCT_CODE
                  JOIN TB_LOCATION tl ON tl.LOCATION_DONG_CD = p.LOCATION_DONG_CD

@@ -12,7 +12,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import static com.life.muna.product.domain.enums.Category.fromCode;
 
@@ -26,8 +25,6 @@ public class ProductCreateRequest {
     @NotBlank(message = "나눔 상품명은 필수 입력 값입니다.")
     @Size(max = 40)
     private String title;
-
-//    private List<byte[]> images;
 
     @NotBlank(message = "나눔 상품설명은 필수 입력 값입니다.")
     private String content;
