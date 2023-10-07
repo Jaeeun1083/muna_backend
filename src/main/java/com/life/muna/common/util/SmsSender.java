@@ -74,11 +74,11 @@ public class SmsSender {
     private static Map<String, String> createSmsData(String phoneNum, String title, String msg) {
         Map<String, String> sms = new HashMap<String, String>();
         // 필수값 입력처리
-        sms.put("user_id", ""); // SMS 아이디
-        sms.put("key", ""); //인증키
+        sms.put("user_id", "munamaster9790"); // SMS 아이디
+        sms.put("key", "4xsdpge0clw96b7ganlgsl7lgy1v7gd7"); //인증키
         sms.put("title", title);
         sms.put("msg", msg);
-        sms.put("sender", ""); // 발신번호
+        sms.put("sender", "01046980234"); // 발신번호
         sms.put("receiver", phoneNum); // 수신번호
         sms.put("testmode_yn", "N"); // Y 인경우 실제문자 전송X , 자동취소(환불) 처리
         return sms;
