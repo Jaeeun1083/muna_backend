@@ -3,9 +3,9 @@ package com.life.muna.like.service;
 import com.life.muna.common.dto.MaxProductInfoResponse;
 import com.life.muna.common.error.ErrorCode;
 import com.life.muna.common.error.exception.BusinessException;
-import com.life.muna.like.dto.ProductLikeListResponse;
+import com.life.muna.like.dto.list.ProductLikeListResponse;
 import com.life.muna.like.mapper.ProductLikeMapper;
-import com.life.muna.product.dto.ProductDetailResponse;
+import com.life.muna.product.dto.detail.ProductDetailResponse;
 import com.life.muna.product.mapper.ProductMapper;
 import com.life.muna.user.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.life.muna.common.error.ErrorCode.NOT_FOUND_USER;
 
 @Service
 public class ProductLikeService {
@@ -35,7 +37,8 @@ public class ProductLikeService {
 
     @Transactional(rollbackFor = Exception.class)
     public boolean likeProduct(String emailFromToken, Long productCode) {
-        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+       /* Long userCode = userMapper.findByEmail(emailFromToken)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_USER)).getUserCode();
 
         Optional<ProductDetailResponse> findProductDetailOptional = productMapper.findProductDetailByProductCode(productCode);
         if(findProductDetailOptional.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_DETAIL);
@@ -49,13 +52,14 @@ public class ProductLikeService {
         if (requestLikeResult == 1) {
             int updateReqCntResult = productMapper.updateLikeCnt(findProductDetail.getProductCode(), findProductDetail.getLikes() + 1);
             return updateReqCntResult == 1;
-        } else {
+        } else {*/
             return false;
-        }
+//        }
     }
 
     public boolean withdrawLikeProduct(String emailFromToken, Long productCode) {
-        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+        Long userCode = userMapper.findByEmail(emailFromToken)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_USER)).getUserCode();
 
         boolean isExists = productLikeMapper.existsByUserCodeAndProductCode(userCode, productCode);
         if(!isExists) throw new BusinessException(ErrorCode.NOT_FOUND_PRODUCT_LIKE);
@@ -69,7 +73,8 @@ public class ProductLikeService {
     }
 
     public List<ProductLikeListResponse> getProductLiked(String emailFromToken) {
-        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+        Long userCode = userMapper.findByEmail(emailFromToken)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_USER)).getUserCode();
 
 //        int offset = (Math.max(page - 1, 0)) * PAGE_SIZE;
 //        List<Long> productCodeList = productLikeMapper.findProductCodeByUserCode(userCode, offset, PAGE_SIZE, maxProductCode);
@@ -85,7 +90,8 @@ public class ProductLikeService {
     }
 
     public MaxProductInfoResponse getMaxProductLikeInfo(String emailFromToken) {
-        Long userCode = userMapper.findUserCodeByEmail(emailFromToken);
+        Long userCode = userMapper.findByEmail(emailFromToken)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_USER)).getUserCode();
         return productLikeMapper.findMaxProductLikeInfo(userCode, PAGE_SIZE);
     }
 

@@ -1,7 +1,6 @@
 package com.life.muna.like.controller;
 
 import com.life.muna.common.dto.CommonResponse;
-import com.life.muna.like.dto.ProductLikeListResponse;
 import com.life.muna.like.service.ProductLikeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Api(tags = "관심 내역 API 정보 제공")

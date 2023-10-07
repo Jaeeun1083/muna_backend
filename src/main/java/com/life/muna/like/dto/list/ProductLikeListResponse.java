@@ -1,10 +1,11 @@
-package com.life.muna.like.dto;
+package com.life.muna.like.dto.list;
 
 import com.life.muna.product.domain.Product;
+import com.life.muna.product.domain.enums.ProductStatus;
 import lombok.Builder;
 import lombok.Getter;
 
-import static com.life.muna.common.util.TimeConverter.convert;
+import static com.life.muna.common.util.TimeConverter.convertDate;
 
 @Getter
 public class ProductLikeListResponse {
@@ -13,12 +14,12 @@ public class ProductLikeListResponse {
     private byte[] thumbnail;
     private Integer reqCnt;
     private Integer mcoin;
-    private boolean productStatus;
+    private ProductStatus productStatus;
     private String insertDate;
     private String updateDate;
 
     @Builder
-    private ProductLikeListResponse(Long productCode, String title, byte[] thumbnail, Integer reqCnt, Integer mcoin, boolean productStatus, String insertDate, String updateDate) {
+    private ProductLikeListResponse(Long productCode, String title, byte[] thumbnail, Integer reqCnt, Integer mcoin, ProductStatus productStatus, String insertDate, String updateDate) {
         this.productCode = productCode;
         this.title = title;
         this.thumbnail = thumbnail;
@@ -37,8 +38,8 @@ public class ProductLikeListResponse {
                 .reqCnt(product.getReqCnt())
                 .mcoin(product.getMcoin())
                 .productStatus(product.getProductStatus())
-                .insertDate(convert(product.getInsertDate()))
-                .updateDate(convert(product.getUpdateDate()))
+                .insertDate(convertDate(product.getInsertDate()))
+                .updateDate(convertDate(product.getUpdateDate()))
                 .build();
     }
 
