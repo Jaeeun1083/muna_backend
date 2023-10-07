@@ -5,16 +5,17 @@ import lombok.Getter;
 
 @Getter
 public class ErrorResponse {
-    private final int statusCode;
+
+    private final int errorCode;
     private final String message;
 
     protected ErrorResponse(ErrorCode errorCode) {
-        this.statusCode = errorCode.getStatusCode();
+        this.errorCode = errorCode.getErrorCode();
         this.message = errorCode.getMessage();
     }
 
-    protected ErrorResponse(int StatusCode, String message) {
-        this.statusCode = StatusCode;
+    protected ErrorResponse(int errorCode, String message) {
+        this.errorCode = errorCode;
         this.message = message;
     }
 
@@ -22,8 +23,8 @@ public class ErrorResponse {
         return new ErrorResponse(errorCode);
     }
 
-    public static ErrorResponse from(int StatusCode, String message) {
-        return new ErrorResponse(StatusCode, message);
+    public static ErrorResponse from(int errorCode, String message) {
+        return new ErrorResponse(errorCode, message);
     }
 
 }
