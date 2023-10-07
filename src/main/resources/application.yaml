@@ -13,9 +13,9 @@ spring:
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: ENC(ouS6KgvjWYsJgipioKgSKr6l18ygue6YQfG9FUQCC7iMvhVXue1scGmXFKsJHVud)
-    username: ENC(BfdfpbO0etaXYvt+o/1qIw==)
-    password: ENC(VgBhQiHr9I112njdmGwpB4ulIKpShRXH)
+    url: ENC(5oilOGUCAvC7TlSFvV6V/nw0rNk7cwAUCSxULjDZFvM9zmTe9H2C4A==)
+    username: ENC(nN6DE10yikg=)
+    password: ENC(i/IL3LRlOOwoSjzpu+7TVw==)
 
 mybatis:
   mapper-locations:  classpath:mapper/*.xml
@@ -44,8 +44,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ENC(aORpLuEiZvUKSXwP2rOhqULGYxppjXgo)
-    password: ENC(hURxLAJE6bnfq5bWCo0yh6XQDpo3e7Dtt+omwBKKALw=) # 4
+    username: ENC(6rqJgwN0DxeckO9Y9JkYNw==)
+    password: ENC(PDrKz6rRlm+qTarMW/zwe52/GLldh6W5) # 4
     properties:
       mail:
         smtp:
